@@ -26,6 +26,15 @@ def signin():
 
         if user:
             session["user_id"] = str(user["_id"])
+
+            if user.get("email") == "secret@ikea.com" and user.get("password") == "secretpassword":
+                session["is_admin"] = True
+            else:
+                session["is_admin"] = False
+
+            if session.get("is_admin"):
+                return redirect(url_for("main.insert"))
+
             return redirect(url_for("main.all_items"))
 
     return render_template("all_items.html")
