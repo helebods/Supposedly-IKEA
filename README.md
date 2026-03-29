@@ -1,5 +1,5 @@
 PLEASE CREATE / PUT THIS SHIT IN YOUR ENV.ENV
-MONGO_URI = mongodbconnection (use your own address nigger)
+MONGO_URI = mongodbconnection (use your own address man)
 
 MYSQL_HOST = localhost
 MYSQL_USER = root
