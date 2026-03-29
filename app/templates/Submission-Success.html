@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Successful</title>
+    <link rel="stylesheet" href="success.css">
+
+    <script>
+        window.onload = function () {
+            let countdown = 10;
+            const countdownElement = document.getElementById("countDown");
+
+            const timer = setInterval(function () {
+                countdownElement.textContent = countdown;
+                countdown--;
+
+                if (countdown < 0) {
+                    clearInterval(timer);
+                    window.location.href = "Submit-Lost-Item.html";
+                }
+            }, 1000);
+        };
+    </script>
+</head>
+<body>
+    <header class="header">
+        <div class="auth-links">
+        </div>
+    </header>
+    <nav class="nav-bar">
+        <div class="site-info">
+            <div class="site-name"><h1>Lost & Listed</h1></div>
+            <div class="tagline">— Lost it | List it | Find it —</div>
+        </div>
+        <h3>Form Submitted Successfully</h3>
+        <h4 class="countDown">Redirecting to Submission Form in: <span id="countDown">10</span></h4>
+    </nav>
+</body>
+</html>

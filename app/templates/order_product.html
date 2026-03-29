@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <title>Lost & Listed - Submit Found Property</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .required-indicator { color: red; }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="auth-links">
+            <span class="username">User Name</span>
+            <span class="user-icon"><i class="fas fa-user"></i></span>
+        </div>
+    </header>
+    <nav class="nav-bar">
+        <div class="site-info">
+            <div class="site-name"><h1>Lost & Listed</h1></div>
+            <div class="tagline">— Lost it | List it | Find it —</div>
+        </div>
+        <div class="nav-links">
+            <a href="Submit-Lost-Item.html">SUBMIT LOST ITEM</a>
+            <a href="Submit-Found-Item.html">SUBMIT FOUND ITEM</a>
+            <a href="Recent-Posts.html">VIEW RECENT POSTS</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="upper-section">
+            <section>
+                <h1>Submit Found Property</h1>
+                <ul>
+                    <li>Our Matching System Finds Lost Properties</li>
+                    <li>Receive Notifications of Matching Found Items</li>
+                    <li>Extended Reach Out with Local Networks</li>
+                </ul>
+                <button>Submit Found Item</button>
+                <p><span class="required-indicator">*</span>Please be descriptive when submitting your found property report, the more</p>
+                <p>information you give us the better chance you have of reuniting items with their owners.</p>
+            </section>
+
+            <aside>
+                <img height="300" width="300" src="../assets/pictures/lost-listed-logo.png" alt="Lost & Listed Logo">
+            </aside>
+
+        </div>
+
+        <div class="itemInfo">
+            <form>
+                <section class="section1">
+                    <h2>Item Information</h2>
+                    <div class="section-group1">
+                        <div class="form-group">
+                            <label for="found-item">What was Found *</label>
+                            <small>(dog, Jacket, Smartphone, wallet, etc...) This field may auto update</small>
+                            <input type="text" name="found_item" placeholder="Input..." required>
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="date-found">Date Found *</label>
+                            <small>Please add the approximate date of when the item was found.</small>
+                            <input type="date" name="date_found" placeholder="Input..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Category *</label>
+                            <small>(Animals/Pets, Clothing, Electronics, Personal Accessories etc.)</small>
+                            <input type="text" name="category" placeholder="Input..." required>
+                        </div>
+            
+                        <div class="form-group">
+                            <label for="time-found">Time Found *</label>
+                            <small>Please add the approximate time of day the item was found.</small>
+                            <input type="time" name="time_found" placeholder="Input..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="brand">Brand</label>
+                            <small>(Ralph Lauren, Samsung, KitchenAid, etc.)</small>
+                            <input type="text" name="brand" placeholder="Input...">
+                        </div>
+
+                        <div class="form-group" id="upload-image-container">
+                            <label for="upload-image">Upload Image *</label>
+                            <small>(This image will display on the Website.)</small>
+                            <input type="file" id="upload-image" name="upload_image" accept="image/*" required>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section2">
+                    <h2>Item Appearance</h2>
+                    <div class="section-group2">
+                        <div class="form-group">
+                            <label for="primary-color">Primary Color *</label>
+                            <small>What is the main color of the item?</small>
+                            <input type="text" name="primary_color" placeholder="Input..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="secondary-color">Secondary Color</label>
+                            <small>If the item has another color, please specify.</small>
+                            <input type="text" name="secondary_color" placeholder="Input...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="additional-info">Additional Information</label>
+                            <small>Any other details about the item's appearance?</small>
+                            <textarea name="additional_info" placeholder="Input..."></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section3">
+                    <h2>Location Information</h2>
+                    <div class="section-group3">
+                        <div class="form-group">
+                            <label for="where-found">Where was it Found? *</label>
+                            <small>Location or Area</small>
+                            <input type="text" name="where_found" placeholder="Input..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="zip-code">ZIP Code *</label>
+                            <small></small>
+                            <input type="text" name="zip_code" placeholder="Input..." required>
+                        </div>
+
+                        <div class="map-container">
+                            <label>Location on Map</label>
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section4">
+                    <button type="submit" name="submit">Submit Found Item</button>
+                </section>
+            </form>
+        </div>
+    </div>
+
+    <script src="recentPosts.js"></script>
+</body>
+
+</html>
