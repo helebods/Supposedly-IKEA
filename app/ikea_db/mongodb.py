@@ -47,3 +47,29 @@ def update_Item(item_id, Product_Name, Product_Brand, Product_Category,
 def delete_item(item_id):
     mongo.db.ikeaunderscoreitems.delete_one({"_id": ObjectId(item_id)})
     return True
+
+def add_user(first_name, last_name, email, password):
+    user = { 
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+        "password": password
+    }
+
+    mongo.db.users.insert_one(user)
+
+    return True
+
+def login_user(email, password):
+    user = mongo.db.users.find_one({"email": email})
+    
+    if not user:
+        print("User not found:", email)
+        return None
+    
+    if user["password"] == password:
+        print("Login successful:", user["email"])
+        return user
+    else:
+        print("Password mismatch:", email)
+        return None

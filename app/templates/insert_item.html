@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insert Item</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/insert_item.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Insert Item</h1>
+        <form action="/insert_item" method="POST">
+            <label for="product_name">Product Name</label>
+            <input type="text" id="product_name" name="Product_Name" placeholder="product name" required><br>
+            <label for="product_brand">Product Brand</label>
+            <input type="text" id="product_brand" name="Product_Brand" placeholder="product brand" required><br>
+            <label for="product_category">Product Category</label>
+            <input type="text" id="product_category" name="Product_Category" placeholder="product category" required><br>
+            <label for="product_description">Product Description</label>
+            <input type="text" id="product_description" name="Product_Description" placeholder="product description" required><br>
+            <label for="product_image_url">Product Image URL</label>
+            <input type="file" accept="image/png, image/jpeg" id="product_image_url" name="Product_Image_URL" required><br><br>
+            <button type="submit">Insert Item</button>
+
+        </form>
+    </div>
+</body>
+</html>

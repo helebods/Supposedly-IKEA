@@ -10,6 +10,7 @@ def create_app():
     app.config.from_object(Config)
 
     app.secret_key = app.config["SECRET_KEY"]
+
     mongo.init_app(app)
 
     from .routes import main
