@@ -4,6 +4,7 @@ from flask import Blueprint, current_app, render_template, request, redirect, ur
 from . import mongo
 from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_item, login_user
 from werkzeug.utils import secure_filename
+from bson import ObjectId
 
 
 main = Blueprint("main", __name__)
@@ -14,6 +15,8 @@ def auth_home():
     return render_template("index.html")
 
 # View All Items
+
+
 @main.route("/all_items")
 def all_items():
 
@@ -24,7 +27,9 @@ def all_items():
     return render_template("all_items.html", items=items)
 
 # Sign In
-@main.route("/signin", methods=["GET","POST"])
+
+
+@main.route("/signin", methods=["GET", "POST"])
 def signin():
     if request.method == "POST":
         email = request.form["signin-email"]
@@ -38,6 +43,7 @@ def signin():
             if user.get("email") == "secret@ikea.com":
                 print("Admin user logged in:", email)
                 session["is_admin"] = True
+
             else:
                 session["is_admin"] = False
 
@@ -49,7 +55,9 @@ def signin():
     return render_template("all_items.html")
 
 # Sign Up
-@main.route("/signup", methods=["GET","POST"])
+
+
+@main.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         firstname = request.form["signup-firstname"]
@@ -69,6 +77,8 @@ def order_product():
     return render_template("order_product.html")
 
 # Insert Item
+
+
 @main.route("/insert", methods=["GET", "POST"])
 def insert():
     if request.method == "POST":
@@ -82,7 +92,8 @@ def insert():
             safe_name = secure_filename(file.filename)
             filename = f"{uuid.uuid4()}_{safe_name}"
 
-            upload_path = os.path.join(current_app.root_path, "static/uploads", filename)
+            upload_path = os.path.join(
+                current_app.root_path, "static/uploads", filename)
             file.save(upload_path)
 
         data["image_url"] = filename
@@ -90,11 +101,51 @@ def insert():
         insert_product(data)
 
         return redirect(url_for("main.all_items"))
-    
+
     return render_template("insert_item.html")
+
 
 @main.route("/logout")
 def logout():
 
     session.pop("user_id", None)
     return redirect(url_for("main.auth_home"))
+
+
+def update(product_id):
+    if request.method == "POST":
+        data = request.form.to_dict()
+
+        file = request.files.get("Product_Image_URL")
+
+        # get existing product directly
+        product = current_app.db.products.find_one(
+            {"_id": ObjectId(product_id)})
+
+        filename = product.get("image_url") if product else None
+
+        if file and file.filename != "":
+            safe_name = secure_filename(file.filename)
+            filename = f"{uuid.uuid4()}_{safe_name}"
+
+            upload_path = os.path.join(
+                current_app.root_path,
+                "static/uploads",
+                filename
+            )
+            file.save(upload_path)
+
+        data["image_url"] = filename
+
+        # update directly in MongoDB
+        current_app.db.products.update_one(
+            {"_id": ObjectId(product_id)},
+            {"$set": data}
+        )
+
+        return redirect(url_for("main.all_items"))
+
+    # fetch product for initial form load
+    product = current_app.db.products.find_one({"_id": ObjectId(product_id)})
+
+    return render_template("update_item.html", product=product)
