@@ -1,5 +1,11 @@
-ul {
+.container {
     display: flex;
     flex-direction: row;
-    gap: 30px;
+    gap: 20px;
+    width: 90vw;
+    margin-bottom: 20px;
+    border: 2px solid #ccc;
+    list-style: none;
+    padding: 10px;
 }
+
