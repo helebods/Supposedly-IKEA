@@ -2,10 +2,10 @@ function togglePassword(eye, inputId) {
     const pass = document.getElementById(inputId);
     if (pass.type === "password") {
         pass.type = "text";
-        eye.src = "static/assets/eye-open.png";
+        eye.src = "static/images/eye-open.png";
     } else {
         pass.type = "password";
-        eye.src = "static/assets/eye-close.png";
+        eye.src = "static/images/eye-close.png";
     }
 }
 

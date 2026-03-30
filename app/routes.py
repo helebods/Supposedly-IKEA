@@ -1,6 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+import uuid
+import os
+from flask import Blueprint, current_app, render_template, request, redirect, url_for, session
 from . import mongo
-from .ikea_db.mongodb import add_user, get_all_items, insert_item, delete_item, login_user
+from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_item, login_user
+from werkzeug.utils import secure_filename
+
 
 main = Blueprint("main", __name__)
 
@@ -32,6 +36,7 @@ def signin():
             session["user_id"] = str(user["_id"])
 
             if user.get("email") == "secret@ikea.com":
+                print("Admin user logged in:", email)
                 session["is_admin"] = True
             else:
                 session["is_admin"] = False
@@ -64,26 +69,32 @@ def order_product():
     return render_template("order_product.html")
 
 # Insert Item
-@main.route("/insert_item", methods=["POST"])
+@main.route("/insert", methods=["GET", "POST"])
 def insert():
-    Product_Name = request.form["Product_Name"]
-    Product_Brand = request.form["Product_Brand"]
-    Product_Category = request.form["Product_Category"]
-    Product_Description = request.form["Product_Description"]
+    if request.method == "POST":
+        data = request.form.to_dict()
 
-    Product_image_url = request.files["Product_Image_URL"]
+        file = request.files.get("Product_Image_URL")
 
-    filename = None
+        filename = None
 
-    if Product_image_url and Product_image_url.filename != "":
-        filename = Product_image_url.filename
-        Product_image_url.save(f"app/static/uploads/{filename}")
+        if file and file.filename != "":
+            safe_name = secure_filename(file.filename)
+            filename = f"{uuid.uuid4()}_{safe_name}"
 
-    insert_item(Product_Name, Product_Brand, Product_Category, Product_Description, filename)
+            upload_path = os.path.join(current_app.root_path, "static/uploads", filename)
+            file.save(upload_path)
 
-    return redirect(url_for("main.all_items"))
+        data["image_url"] = filename
+
+        insert_product(data)
+
+        return redirect(url_for("main.all_items"))
+    
+    return render_template("insert_item.html")
 
 @main.route("/logout")
 def logout():
+
     session.pop("user_id", None)
     return redirect(url_for("main.auth_home"))
