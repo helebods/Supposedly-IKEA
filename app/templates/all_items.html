@@ -1,62 +1,61 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <title>Lost & Listed - Recent Posts</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-
-  <body>
-    <header class="header">
-      <div class="auth-links">
-        <a href="{{url_for('main.signin')}}">Sign up</a> |
-        <a href="#">Log in</a>
-        <span class="user-icon"><i class="fas fa-user"></i></span>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/all_items.css') }}">
+  <title>All Items</title>
+</head>
+<body>
+  
+  <h1>All Items</h1>
+  
+    <ul>
+      {% for item in items %}
+      <div class="container">
+        <li>
+          <h3>Product Description</h3>
+          <p>Product Name: {{ item.product.Product_Name }}</p>
+          <p>Brand: {{ item.product.Product_Brand }}</p>
+          <p>Category: {{ item.product.Product_Category }}</p>
+          <p>Description: {{ item.product.Product_Description }}</p>
+          <img src="{{ url_for('static', filename='uploads/' + item.product.Product_image_url) }}" alt="{{ item.product.Product_Name }}" width="100">
+        </li>
+        <li>
+          <h3>Location</h3>
+          <p>Warehouse: {{ item.location.warehouse }}</p>
+          <p>Aisle: {{ item.location.aisle }}</p>
+          <p>Rack: {{ item.location.rack }}</p>
+          <p>Bin: {{ item.location.bin }}</p>
+        </li>
+        <li>
+          <h3>Stock</h3>
+          <p>Quantity: {{ item.stock.quantity }} {{ item.stock.unit }}</p>
+          <p>Reorder Level: {{ item.stock.reorder_level }}</p>
+        </li>
+        <li>
+          <h3>Price</h3>
+          <p>Cost: ${{ item.price.cost }}</p>
+          <p>Selling Price: ${{ item.price.selling_price }}</p>
+        </li>
+        <li>
+          <h3>Stock History</h3>
+          <p>Type: {{ item.stock_history.type }}</p>
+          <p>Quantity: {{ item.stock_history.quantity }}</p>
+          <p>Date: {{ item.stock_history.date }}</p>
+          <p>Handled By: {{ item.stock_history.handled_by }}</p>
+        </li>
+        <li>
+          <h3>Last Updated</h3>
+          <p>Created at: {{ item.created_at }}</p>
+          <p>Last Updated: {{ item.updated_at }}</p>
+        </li>
       </div>
-    </header>
-    <nav class="nav-bar">
-      <div class="site-info">
-        <div class="site-name"><h1>Lost & Listed</h1></div>
-        <div class="tagline">— Lost it | List it | Find it —</div>
-      </div>
-      <div class="nav-links">
-        <a href="Submit-Lost-Item.html">SUBMIT LOST ITEM</a>
-        <a href="Submit-Found-Item.html">SUBMIT FOUND ITEM</a>
-        <a href="Recent-Posts.html">VIEW RECENT POSTS</a>
-      </div>
-    </nav>
+      {% endfor %}
+    </ul>
+  
 
-    <div class="container">
-      <div class="upper-section">
-        <section>
-          <h1>Recent Posts</h1>
-          <ul>
-            <li>Our Matching System Finds Lost Properties</li>
-            <li>Receive Notifications of Matching Found Items</li>
-            <li>Extended Reach Out with Local Networks</li>
-          </ul>
-        </section>
+  <a href="{{ url_for('main.logout') }}">Logout</a>
 
-        <aside>
-          <img
-            height="300"
-            width="300"
-            src="assets/pictures/lost-listed-logo.png"
-            alt="Lost & Listed Logo"
-          />
-        </aside>
-      </div>
-
-      <div class="recent-posts" id="recent-posts">
-        <!-- Posts will be loaded here -->
-      </div>
-    </div>
-
-    <script src="recentPosts.js"></script>
-  </body>
+</body>
 </html>

@@ -1,40 +1,65 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
-from .ikea_db.mongodb import get_all_items, insert_item, delete_item
+import uuid
+import os
+from flask import Blueprint, current_app, render_template, request, redirect, url_for, session
+from . import mongo
+from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_item, login_user
+from werkzeug.utils import secure_filename
+
 
 main = Blueprint("main", __name__)
 
 
 @main.route("/")
-def home():
+def auth_home():
     return render_template("index.html")
-
-# Homepage
-
-
-@main.route("/homepage")
-def homepage():
-    return render_template("homepage.html")
-
 
 # View All Items
 @main.route("/all_items")
 def all_items():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.auth_home"))
+
     items = get_all_items()
-    return render_template("all_items.html")
+    return render_template("all_items.html", items=items)
 
 # Sign In
-
-
-@main.route("/signin")
+@main.route("/signin", methods=["GET","POST"])
 def signin():
-    return render_template("signin.html")
+    if request.method == "POST":
+        email = request.form["signin-email"]
+        password = request.form["signin-password"]
+
+        user = login_user(email, password)
+
+        if user:
+            session["user_id"] = str(user["_id"])
+
+            if user.get("email") == "secret@ikea.com":
+                print("Admin user logged in:", email)
+                session["is_admin"] = True
+            else:
+                session["is_admin"] = False
+
+            if session.get("is_admin"):
+                return redirect(url_for("main.insert"))
+
+            return redirect(url_for("main.all_items"))
+
+    return render_template("all_items.html")
 
 # Sign Up
-
-
-@main.route("/signup")
+@main.route("/signup", methods=["GET","POST"])
 def signup():
-    return render_template("signup.html")
+    if request.method == "POST":
+        firstname = request.form["signup-firstname"]
+        lastname = request.form["signup-lastname"]
+        email = request.form["signup-email"]
+        password = request.form["signup-password"]
+
+        add_user(firstname, lastname, email, password)
+
+    return render_template("index.html")
 
 
 # Order Product
@@ -42,3 +67,34 @@ def signup():
 @main.route("/order_product")
 def order_product():
     return render_template("order_product.html")
+
+# Insert Item
+@main.route("/insert", methods=["GET", "POST"])
+def insert():
+    if request.method == "POST":
+        data = request.form.to_dict()
+
+        file = request.files.get("Product_Image_URL")
+
+        filename = None
+
+        if file and file.filename != "":
+            safe_name = secure_filename(file.filename)
+            filename = f"{uuid.uuid4()}_{safe_name}"
+
+            upload_path = os.path.join(current_app.root_path, "static/uploads", filename)
+            file.save(upload_path)
+
+        data["image_url"] = filename
+
+        insert_product(data)
+
+        return redirect(url_for("main.all_items"))
+    
+    return render_template("insert_item.html")
+
+@main.route("/logout")
+def logout():
+
+    session.pop("user_id", None)
+    return redirect(url_for("main.auth_home"))
