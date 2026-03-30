@@ -10,7 +10,13 @@
   <h1>All Items</h1>
   <ul>
     {% for item in items %}
-      <li>{{ item.name }} - {{ item.description }}</li>
+      <li>
+        <p>Product Name: {{ item.Product_Name }}</p>
+        <p>Brand: {{ item.Product_Brand }}</p>
+        <p>Category: {{ item.Product_Category }}</p>
+        <p>Description: {{ item.Product_Description }}</p>
+        <img src="{{ url_for('static', filename='uploads/' + item.Product_image_url) }}" alt="{{ item.Product_Name }}" width="100">
+      </li>
     {% endfor %}
   </ul>
 

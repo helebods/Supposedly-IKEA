@@ -12,6 +12,10 @@ def auth_home():
 # View All Items
 @main.route("/all_items")
 def all_items():
+
+    if "user_id" not in session:
+        return redirect(url_for("main.auth_home"))
+
     items = get_all_items()
     return render_template("all_items.html", items=items)
 
@@ -27,7 +31,7 @@ def signin():
         if user:
             session["user_id"] = str(user["_id"])
 
-            if user.get("email") == "secret@ikea.com" and user.get("password") == "secretpassword":
+            if user.get("email") == "secret@ikea.com":
                 session["is_admin"] = True
             else:
                 session["is_admin"] = False
@@ -66,9 +70,16 @@ def insert():
     Product_Brand = request.form["Product_Brand"]
     Product_Category = request.form["Product_Category"]
     Product_Description = request.form["Product_Description"]
-    Product_image_url = request.form["Product_image_url"]
 
-    insert_item(Product_Name, Product_Brand, Product_Category, Product_Description, Product_image_url)
+    Product_image_url = request.files["Product_Image_URL"]
+
+    filename = None
+
+    if Product_image_url and Product_image_url.filename != "":
+        filename = Product_image_url.filename
+        Product_image_url.save(f"app/static/uploads/{filename}")
+
+    insert_item(Product_Name, Product_Brand, Product_Category, Product_Description, filename)
 
     return redirect(url_for("main.all_items"))
 

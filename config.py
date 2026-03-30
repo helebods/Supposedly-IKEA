@@ -7,4 +7,4 @@ class Config:
     # MongoDB connection
     MONGO_URI = os.getenv("MONGO_URI")
 
-    SECRET_KEY = os.getenv("SECRET_KEY", "aresDaGreatSecretKey")
+    SECRET_KEY = os.getenv("SECRET_KEY")
