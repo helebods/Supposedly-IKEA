@@ -9,14 +9,17 @@ def get_all_items():
     return list(mongo.db.ikeaunderscoreitems.find())
 
 # Insert Item
+
+
 def build_product(Product_Name, Product_Brand, Product_Category, Product_Description, File_Name):
     return {
-            "Product_Name": Product_Name,
-            "Product_Brand": Product_Brand,
-            "Product_Category": Product_Category,
-            "Product_Description": Product_Description,
-            "Product_image_url": File_Name
-        }
+        "Product_Name": Product_Name,
+        "Product_Brand": Product_Brand,
+        "Product_Category": Product_Category,
+        "Product_Description": Product_Description,
+        "Product_image_url": File_Name
+    }
+
 
 def build_location(warehouse, aisle, rack, bin):
     return {
@@ -26,6 +29,7 @@ def build_location(warehouse, aisle, rack, bin):
         "bin": bin
     }
 
+
 def build_stock(quantity, unit, reorder_level):
     return {
         "quantity": quantity,
@@ -33,11 +37,13 @@ def build_stock(quantity, unit, reorder_level):
         "reorder_level": reorder_level
     }
 
+
 def build_pricing(cost, selling_price):
     return {
         "cost": cost,
         "selling_price": selling_price
     }
+
 
 def build_stock_history(type, quantity, date, handled_by):
     return {
@@ -46,6 +52,7 @@ def build_stock_history(type, quantity, date, handled_by):
         "date": date,
         "handled_by": handled_by
     }
+
 
 def insert_product(data):
 
@@ -88,18 +95,22 @@ def insert_product(data):
 # Update Item
 
 
-def update_Item(item_id, Product_Name, Product_Brand, Product_Category,
-                Product_Description, File_Name):
+def update_Item(data):
     updated_Item = {
-        "Product_Name": Product_Name,
-        "Product_Brand": Product_Brand,
-        "Product_Category": Product_Category,
-        "Product_Description": Product_Description,
-        "Product_image_url": File_Name
+        "stock": build_stock(
+            int(data.get("quantity")),
+            data.get("unit"),
+            int(data.get("reorder_level"))
+        ),
+        "price": build_pricing(
+            float(data.get("cost")),
+            float(data.get("selling_price"))
+        ),
+        "updated_at": datetime.utcnow()
     }
 
     mongo.db.ikeaunderscoreitems.update_one(
-        {"_id": ObjectId(item_id)}, {"$set": updated_Item})
+        {"Product_Name": {"$eq": data.get("Product_Name")}}, {"Product_Brand": {"$eq": data.get("Product_Brand")}}, {"$set": updated_Item})
 
     return True
 
@@ -110,12 +121,13 @@ def delete_item(item_id):
     mongo.db.ikeaunderscoreitems.delete_one({"_id": ObjectId(item_id)})
     return True
 
+
 def add_user(first_name, last_name, email, password):
     if mongo.db.users.find_one({"email": email}):
         print("User already exists:", email)
         return False
-    
-    user = { 
+
+    user = {
         "first_name": first_name,
         "last_name": last_name,
         "email": email,
@@ -126,13 +138,14 @@ def add_user(first_name, last_name, email, password):
 
     return True
 
+
 def login_user(email, password):
     user = mongo.db.users.find_one({"email": email})
-    
+
     if not user:
         print("User not found:", email)
         return None
-    
+
     if user["password"] == password:
         print("Login successful:", user["email"])
         return user
