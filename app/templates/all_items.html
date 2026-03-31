@@ -1,15 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/all_items.css') }}">
-  <title>All Items</title>
-</head>
-<body>
-  
-  <h1>All Items</h1>
-  
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/all_items.css') }}"
+    />
+    <title>All Items</title>
+  </head>
+  <body>
+    <h1>All Items</h1>
+
     <ul>
       {% for item in items %}
       <div class="container">
@@ -19,7 +21,11 @@
           <p>Brand: {{ item.product.Product_Brand }}</p>
           <p>Category: {{ item.product.Product_Category }}</p>
           <p>Description: {{ item.product.Product_Description }}</p>
-          <img src="{{ url_for('static', filename='uploads/' + item.product.Product_image_url) }}" alt="{{ item.product.Product_Name }}" width="100">
+          <img
+            src="{{ url_for('static', filename='uploads/' + item.product.Product_image_url) }}"
+            alt="{{ item.product.Product_Name }}"
+            width="100"
+          />
         </li>
         <li>
           <h3>Location</h3>
@@ -53,9 +59,7 @@
       </div>
       {% endfor %}
     </ul>
-  
 
-  <a href="{{ url_for('main.logout') }}">Logout</a>
-
-</body>
+    <a href="{{ url_for('main.logout') }}">Logout</a>
+  </body>
 </html>

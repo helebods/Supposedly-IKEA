@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 def get_all_items():
-    return list(mongo.db.ikeaunderscoreitems.find())
+    return list(mongo.db["items"].find())
 
 # Insert Item
 
@@ -89,13 +89,13 @@ def insert_product(data):
         "updated_at": datetime.utcnow()
     }
 
-    mongo.db.ikeaunderscoreitems.insert_one(item)
+    mongo.db["items"].insert_one(item)
     return True
 
 # Update Item
 
 
-def update_Item(data):
+def update_One_Item(product_Id, data):
     updated_Item = {
         "stock": build_stock(
             int(data.get("quantity")),
@@ -109,21 +109,33 @@ def update_Item(data):
         "updated_at": datetime.utcnow()
     }
 
-    mongo.db.ikeaunderscoreitems.update_one(
-        {"Product_Name": {"$eq": data.get("Product_Name")}}, {"Product_Brand": {"$eq": data.get("Product_Brand")}}, {"$set": updated_Item})
+    result = mongo.db["items"].update_one(
+        {
+            "_id": ObjectId(product_Id)
+        },
+        {
+            "$set": updated_Item
+        }
+    )
 
-    return True
+    return result.modified_count > 0
 
 # Delete Item
 
 
-def delete_item(item_id):
-    mongo.db.ikeaunderscoreitems.delete_one({"_id": ObjectId(item_id)})
-    return True
+def delete_One_Item(product_Id):
+    try:
+        result = mongo.db["items"].delete_one(
+            {"_id": ObjectId(product_Id)})
+        return result.deleted_count > 0
+
+    except Exception as e:
+        print("Error occurred while deleting item:", e)
+        return False
 
 
 def add_user(first_name, last_name, email, password):
-    if mongo.db.users.find_one({"email": email}):
+    if mongo.db["users"].find_one({"email": email}):
         print("User already exists:", email)
         return False
 
@@ -134,13 +146,13 @@ def add_user(first_name, last_name, email, password):
         "password": password
     }
 
-    mongo.db.users.insert_one(user)
+    mongo.db["users"].insert_one(user)
 
     return True
 
 
 def login_user(email, password):
-    user = mongo.db.users.find_one({"email": email})
+    user = mongo.db["users"].find_one({"email": email})
 
     if not user:
         print("User not found:", email)
