@@ -2,7 +2,7 @@ import uuid
 import os
 from flask import Blueprint, current_app, render_template, request, redirect, url_for, session
 from . import mongo
-from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_item, login_user
+from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_One_Item, update_One_Item, login_user
 from werkzeug.utils import secure_filename
 from bson import ObjectId
 
