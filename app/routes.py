@@ -2,7 +2,7 @@ import uuid
 import os
 from flask import Blueprint, current_app, render_template, request, redirect, url_for, session
 from . import mongo
-from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_One_Item, update_One_Item, login_user
+from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_One_Item, update_One_Item, login_user, count_total_items, count_per_category, count_per_name
 from werkzeug.utils import secure_filename
 from bson import ObjectId
 
@@ -97,6 +97,8 @@ def insert():
             file.save(upload_path)
 
         data["image_url"] = filename
+        if data["image_url"] is None:
+            data["image_url"] = "quibolords.jpg"
 
         insert_product(data)
 
@@ -112,6 +114,7 @@ def logout():
     return redirect(url_for("main.auth_home"))
 
 
+@main.route("/update", methods=["GET", "POST"])
 def update(product_id):
     if request.method == "POST":
         data = request.form.to_dict()
@@ -149,3 +152,15 @@ def update(product_id):
     product = current_app.db.products.find_one({"_id": ObjectId(product_id)})
 
     return render_template("update_item.html", product=product)
+
+
+@main.route("/count_all_items")
+def count_all_items():
+    total_items = count_total_items()
+    return render_template("all_items.html", total_items=total_items)
+
+
+@main.route("/count_per_category")
+def per_category_count():
+    item_category_count = count_per_category()
+    return render_template("all_items.html", item_category_count=item_category_count)
