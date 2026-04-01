@@ -166,45 +166,51 @@ def login_user(email, password):
         return None
 
 
-#aggregate functions for all items page
-def cout_total_items():
-    return mongo.db.ikeaunderscoreitems.count_documents({})
+# aggregate functions for all items page
+def count_total_items():
+    return mongo.db["items"].count_documents({})
+
 
 def count_per_category():
     pipeline = [
         {"$group": {"_id": "$product.Product_Category", "count": {"$sum": 1}}}
     ]
-    return list(mongo.db.ikeaunderscoreitems.aggregate(pipeline))
+    return list(mongo.db["items"].aggregate(pipeline))
+
 
 def count_per_name():
     pipeline = [
         {"$group": {"_id": "$product.Product_Name", "count": {"$sum": 1}}}
     ]
-    return list(mongo.db.ikeaunderscoreitems.aggregate(pipeline))
+    return list(mongo.db["items"].aggregate(pipeline))
+
 
 def count_per_brand():
     pipeline = [
         {"$group": {"_id": "$product.Product_Brand", "count": {"$sum": 1}}}
     ]
-    return list(mongo.db.ikeaunderscoreitems.aggregate(pipeline))
+    return list(mongo.db["items"].aggregate(pipeline))
+
 
 def average_selling_price():
     pipeline = [
-        {"$group": {"_id": None, "avgPrice": {"$avg": "$price.selling_price"}}}                                             
+        {"$group": {"_id": None, "avgPrice": {"$avg": "$price.selling_price"}}}
     ]
-    result = list(mongo.db.ikeaunderscoreitems.aggregate(pipeline))
+    result = list(mongo.db["items"].aggregate(pipeline))
     return round(result[0]["avgPrice"], 2) if result else 0
+
 
 def min_quantity():
     pipeline = [
         {"$group": {"_id": None, "minQty": {"$min": "$stock.quantity"}}}
     ]
-    result = list(mongo.db.ikeaunderscoreitems.aggregate(pipeline))
+    result = list(mongo.db["items"].aggregate(pipeline))
     return result[0]["minQty"] if result else 0
+
 
 def max_quantity():
     pipeline = [
         {"$group": {"_id": None, "maxQty": {"$max": "$stock.quantity"}}}
     ]
-    result = list(mongo.db.ikeaunderscoreitems.aggregate(pipeline))
+    result = list(mongo.db["items"].aggregate(pipeline))
     return result[0]["maxQty"] if result else 0
