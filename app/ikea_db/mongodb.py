@@ -214,3 +214,31 @@ def max_quantity():
     ]
     result = list(mongo.db["items"].aggregate(pipeline))
     return result[0]["maxQty"] if result else 0
+
+
+def find_and_sort_by_price(item_name):
+    return list(mongo.db["items"].find({"product.Product_Name": item_name}).sort("price.selling_price", 1))
+
+
+def find_and_sort_by_quantity(item_name):
+    return list(mongo.db["items"].find({"product.Product_Name": item_name}).sort("stock.quantity", 1))
+
+
+def find_by_category(item_name, category):
+    try:
+        if category is None:
+            return list(mongo.db["items"].find({"product.Product_Name": item_name}))
+        elif category == category.get("Product_Category"):
+            return list(mongo.db["items"].find({"product.Product_Name": item_name, "product.Product_Category": category}))
+    except Exception as e:
+        return False
+
+
+def find_by_brand(item_name, brand):
+    try:
+        if brand is None:
+            return list(mongo.db["items"].find({"product.Product_Name": item_name}))
+        elif brand == brand.get("Product_Brand"):
+            return list(mongo.db["items"].find({"product.Product_Name": item_name, "product.Product_Brand": brand}))
+    except Exception as e:
+        return False
