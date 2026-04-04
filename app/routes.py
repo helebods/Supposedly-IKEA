@@ -2,7 +2,7 @@ import uuid
 import os
 from flask import Blueprint, current_app, render_template, request, redirect, url_for, session
 from . import mongo
-from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_One_Item, update_One_Item, login_user, count_total_items, count_per_category, count_per_name, search_items
+from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_One_Item, update_One_Item, login_user, count_total_items, count_per_category, count_per_name, search_items, get_stock_count
 from werkzeug.utils import secure_filename
 from bson import ObjectId
 
@@ -166,7 +166,7 @@ def per_category_count():
     return render_template("all_items.html", item_category_count=item_category_count)
 
 #seacrh
-@main.route('/search')
+@main.route("/search")
 def search():
     user_input = request.args.get('q')
     if not user_input:
@@ -174,3 +174,5 @@ def search():
     
     results = search_items(user_input)
     return render_template('all_items.html', items=results)
+
+# variations of find and stufgf

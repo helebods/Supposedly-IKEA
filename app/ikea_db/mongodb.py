@@ -247,3 +247,45 @@ def find_by_brand(item_name, brand):
 def search_items(user_input):
     query = {"product.Product_Name": {"$regex": user_input, "$options": "i"}}
     return list(mongo.db["items"].find(query))
+
+
+#other find function this is so useless fr
+
+#dis kinda useful for low stock view
+# this is for  db.<collection>.find({“parameter”},{attribute:1})
+# for low stock view can be used for dashboard or ordering function to help user to orde the rightprod
+
+def get_low_stock():
+    prediction = {
+        "product.Product_Name": 1,
+        "stock.quantity": 1,
+        "stock.unit": 1,
+        "stock.reorder_level": 1,
+        "location": 1,
+        "_id": 0
+    }
+    return list(mongo.db["items"].find(
+        {"$expr": {"$lt": ["$stock.quantity", "$stock.reorder_level"]}},
+        prediction
+    ))
+
+
+# db.<collection>.find({ },{attribute:1})
+# for manage items back end
+def get_manage_items():
+    projection = {
+        "product.Product_Name": 1,
+        "product.Product_Brand": 1,
+        "product.Product_Category": 1,
+        "product.Product_image_url": 1,
+        "_id": 1 
+    }
+    return list(mongo.db["items"].find({}, projection))
+
+# find({"parameter"}, {attribute: 0}) 
+# for insert page to check if item already exists, if it does then we can just update the stock and price instead of creating a new entry
+def check_existing_item(name):
+    return mongo.db["items"].find_one(
+        {"product.Product_Name": {"$regex": name, "$options": "i"}},
+        {"price": 0, "stock_history": 0, "location": 0, "_id": 0}
+    )
