@@ -2,7 +2,7 @@ import uuid
 import os
 from flask import Blueprint, current_app, render_template, request, redirect, url_for, session
 from . import mongo
-from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_One_Item, update_One_Item, login_user, count_total_items, count_per_category, count_per_name, search_items, get_stock_count
+from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_One_Item, update_One_Item, login_user, count_total_items, count_per_category, count_per_name, search_items, get_low_stock
 from werkzeug.utils import secure_filename
 from bson import ObjectId
 
@@ -74,7 +74,11 @@ def signup():
 
 @main.route("/order_product")
 def order_product():
-    return render_template("order_product.html")
+    if "user_id" not in session:
+        return redirect(url_for("main.auth_home"))
+    items = get_low_stock()
+    return render_template('order_product.html', items=items)
+
 
 # Insert Item
 
@@ -175,4 +179,4 @@ def search():
     results = search_items(user_input)
     return render_template('all_items.html', items=results)
 
-# variations of find and stufgf
+

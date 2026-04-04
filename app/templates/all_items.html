@@ -10,68 +10,106 @@
     <title>All Items</title>
   </head>
   <body>
-    <div class="search-container">
-      <form action="/search" method="GET">
-        <input 
-          type="text" 
-          class="search-input" 
-          name="q" 
-          placeholder="Search IKEA products..."
-          value="{{ request.args.get('q', '') }}"
-          />
-        <button type="submit" class="search-btn">Go</button>
-      </form>
-    </div>
-    <h1>All Items</h1>
 
-    <ul>
-      {% for item in items %}
-      <div class="container">
-        <li>
-          <h3>Product Description</h3>
-          <p>Product Name: {{ item.product.Product_Name }}</p>
-          <p>Brand: {{ item.product.Product_Brand }}</p>
-          <p>Category: {{ item.product.Product_Category }}</p>
-          <p>Description: {{ item.product.Product_Description }}</p>
-          <img
-            src="{{ url_for('static', filename='uploads/' + item.product.Product_image_url) }}"
-            alt="{{ item.product.Product_Name }}"
-            width="100"
-          />
-        </li>
-        <li>
-          <h3>Location</h3>
-          <p>Warehouse: {{ item.location.warehouse }}</p>
-          <p>Aisle: {{ item.location.aisle }}</p>
-          <p>Rack: {{ item.location.rack }}</p>
-          <p>Bin: {{ item.location.bin }}</p>
-        </li>
-        <li>
-          <h3>Stock</h3>
-          <p>Quantity: {{ item.stock.quantity }} {{ item.stock.unit }}</p>
-          <p>Reorder Level: {{ item.stock.reorder_level }}</p>
-        </li>
-        <li>
-          <h3>Price</h3>
-          <p>Cost: ${{ item.price.cost }}</p>
-          <p>Selling Price: ${{ item.price.selling_price }}</p>
-        </li>
-        <li>
-          <h3>Stock History</h3>
-          <p>Type: {{ item.stock_history.type }}</p>
-          <p>Quantity: {{ item.stock_history.quantity }}</p>
-          <p>Date: {{ item.stock_history.date }}</p>
-          <p>Handled By: {{ item.stock_history.handled_by }}</p>
-        </li>
-        <li>
-          <h3>Last Updated</h3>
-          <p>Created at: {{ item.created_at }}</p>
-          <p>Last Updated: {{ item.updated_at }}</p>
-        </li>
+ <!-- OVERLAY -->
+    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+    <!-- SLIDE-IN MENU -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">Warehouse</div>
+        <button class="close-btn" onclick="closeMenu()">&#x2715;</button>
       </div>
-      {% endfor %}
-    </ul>
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('main.all_items') }}" class="sidebar-link active">All Items</a>
+        <a href="{{ url_for('main.order_product') }}" class="sidebar-link">Restock Orders</a>
+        <a href="{{ url_for('main.insert') }}" class="sidebar-link">Insert Item</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <a href="{{ url_for('main.logout') }}" class="sidebar-link logout">Logout</a>
+      </div>
+    </aside>
 
-    <a href="{{ url_for('main.logout') }}">Logout</a>
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <img src="{{ url_for('static', filename='images/bronny.png') }}" alt="Logo" class="logo" width=100/>
+      <div class="search-container">
+        <form action="/search" method="GET">
+          <input
+            type="text"
+            class="search-input"
+            name="q"
+            placeholder="Search products..."
+            value="{{ request.args.get('q', '') }}"
+          />
+          <button type="submit" class="search-btn">Search</button>
+        </form>
+      </div>
+      <button class="burger" onclick="openMenu()">&#9776;</button>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="content">
+      <h1>All Items</h1>
+      <ul>
+        {% for item in items %}
+        <div class="container">
+          <li>
+            <h3>Product Description</h3>
+            <p>Product Name: {{ item.product.Product_Name }}</p>
+            <p>Brand: {{ item.product.Product_Brand }}</p>
+            <p>Category: {{ item.product.Product_Category }}</p>
+            <p>Description: {{ item.product.Product_Description }}</p>
+            <img
+              src="{{ url_for('static', filename='uploads/' + item.product.Product_image_url) }}"
+              alt="{{ item.product.Product_Name }}"
+              width="100"
+            />
+          </li>
+          <li>
+            <h3>Location</h3>
+            <p>Warehouse: {{ item.location.warehouse }}</p>
+            <p>Aisle: {{ item.location.aisle }}</p>
+            <p>Rack: {{ item.location.rack }}</p>
+            <p>Bin: {{ item.location.bin }}</p>
+          </li>
+          <li>
+            <h3>Stock</h3>
+            <p>Quantity: {{ item.stock.quantity }} {{ item.stock.unit }}</p>
+            <p>Reorder Level: {{ item.stock.reorder_level }}</p>
+          </li>
+          <li>
+            <h3>Price</h3>
+            <p>Cost: ${{ item.price.cost }}</p>
+            <p>Selling Price: ${{ item.price.selling_price }}</p>
+          </li>
+          <li>
+            <h3>Stock History</h3>
+            <p>Type: {{ item.stock_history.type }}</p>
+            <p>Quantity: {{ item.stock_history.quantity }}</p>
+            <p>Date: {{ item.stock_history.date }}</p>
+            <p>Handled By: {{ item.stock_history.handled_by }}</p>
+          </li>
+          <li>
+            <h3>Last Updated</h3>
+            <p>Created at: {{ item.created_at }}</p>
+            <p>Last Updated: {{ item.updated_at }}</p>
+          </li>
+        </div>
+        {% endfor %}
+      </ul>
+    </main>
+
+    <script>
+      function openMenu() {
+        document.getElementById('sidebar').classList.add('open');
+        document.getElementById('overlay').classList.add('show');
+      }
+      function closeMenu() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('overlay').classList.remove('show');
+      }
+    </script>
+
   </body>
 </html>

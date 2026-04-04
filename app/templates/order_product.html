@@ -1,13 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Product</title>
-</head>
-<body>
-    
-    <h1>Order Product</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order / Restock</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/order.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Items to Restock</h1>
 
-</body>
+      {% if items %}
+      <table>
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Current Stock</th>
+            <th>Reorder Level</th>
+            <th>Deficit</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.product.Product_Name }}</td>
+            <td>{{ item.product.Product_Category }}</td>
+            <td>{{ item.stock.quantity }} {{ item.stock.unit }}</td>
+            <td>{{ item.stock.reorder_level }}</td>
+            <td>{{ item.stock.reorder_level - item.stock.quantity }} {{ item.stock.unit }}</td>
+            <td>{{ item.location.warehouse }} / {{ item.location.aisle }}-{{ item.location.rack }}-{{ item.location.bin }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p class="empty">All items are sufficiently stocked.</p>
+      {% endif %}
+
+      <a href="{{ url_for('main.all_items') }}">Back to All Items</a>
+    </div>
+  </body>
 </html>
