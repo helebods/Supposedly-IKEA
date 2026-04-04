@@ -10,6 +10,18 @@
     <title>All Items</title>
   </head>
   <body>
+    <div class="search-container">
+      <form action="/search" method="GET">
+        <input 
+          type="text" 
+          class="search-input" 
+          name="q" 
+          placeholder="Search IKEA products..."
+          value="{{ request.args.get('q', '') }}"
+          />
+        <button type="submit" class="search-btn">Go</button>
+      </form>
+    </div>
     <h1>All Items</h1>
 
     <ul>

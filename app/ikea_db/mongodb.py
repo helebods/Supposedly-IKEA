@@ -242,3 +242,8 @@ def find_by_brand(item_name, brand):
             return list(mongo.db["items"].find({"product.Product_Name": item_name, "product.Product_Brand": brand}))
     except Exception as e:
         return False
+    
+#search function
+def search_items(user_input):
+    query = {"product.Product_Name": {"$regex": user_input, "$options": "i"}}
+    return list(mongo.db["items"].find(query))
