@@ -167,11 +167,11 @@ def login_user(email, password):
 
 
 # aggregate functions for all items page
-def agg_count_total_items():
+def count_total_items():
     return mongo.db["items"].count_documents({})
 
 
-def agg_count_per_category():
+def count_per_category():
     return {"$group": {"_id": "$product.Product_Category", "count": {"$sum": 1}}}
 
 
@@ -243,7 +243,6 @@ def search_items(user_input):
     #     pipeline.append({"$match": query})
     # if aggregate:
     #     pipeline.append(aggregate)
-
     return list(mongo.db["items"].find(query, {"_id": 0}))
 
 
