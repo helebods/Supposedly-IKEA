@@ -165,12 +165,14 @@ def per_category_count():
     item_category_count = count_per_category()
     return render_template("all_items.html", item_category_count=item_category_count)
 
-#seacrh
+# seacrh
+
+
 @main.route('/search')
 def search():
     user_input = request.args.get('q')
     if not user_input:
         return redirect(url_for('main.all_items'))
-    
+
     results = search_items(user_input)
     return render_template('all_items.html', items=results)

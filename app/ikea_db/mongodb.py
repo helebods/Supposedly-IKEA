@@ -167,53 +167,32 @@ def login_user(email, password):
 
 
 # aggregate functions for all items page
-def count_total_items():
+def agg_count_total_items():
     return mongo.db["items"].count_documents({})
 
 
-def count_per_category():
-    pipeline = [
-        {"$group": {"_id": "$product.Product_Category", "count": {"$sum": 1}}}
-    ]
-    return list(mongo.db["items"].aggregate(pipeline))
+def agg_count_per_category():
+    return {"$group": {"_id": "$product.Product_Category", "count": {"$sum": 1}}}
 
 
 def count_per_name():
-    pipeline = [
-        {"$group": {"_id": "$product.Product_Name", "count": {"$sum": 1}}}
-    ]
-    return list(mongo.db["items"].aggregate(pipeline))
+    return {"$group": {"_id": "$product.Product_Name", "count": {"$sum": 1}}}
 
 
 def count_per_brand():
-    pipeline = [
-        {"$group": {"_id": "$product.Product_Brand", "count": {"$sum": 1}}}
-    ]
-    return list(mongo.db["items"].aggregate(pipeline))
+    return {"$group": {"_id": "$product.Product_Brand", "count": {"$sum": 1}}}
 
 
 def average_selling_price():
-    pipeline = [
-        {"$group": {"_id": None, "avgPrice": {"$avg": "$price.selling_price"}}}
-    ]
-    result = list(mongo.db["items"].aggregate(pipeline))
-    return round(result[0]["avgPrice"], 2) if result else 0
+    return {"$group": {"_id": None, "avgSellingPrice": {"$avg": "$price.selling_price"}}}
 
 
 def min_quantity():
-    pipeline = [
-        {"$group": {"_id": None, "minQty": {"$min": "$stock.quantity"}}}
-    ]
-    result = list(mongo.db["items"].aggregate(pipeline))
-    return result[0]["minQty"] if result else 0
+    return {"$group": {"_id": None, "minQty": {"$min": "$stock.quantity"}}}
 
 
 def max_quantity():
-    pipeline = [
-        {"$group": {"_id": None, "maxQty": {"$max": "$stock.quantity"}}}
-    ]
-    result = list(mongo.db["items"].aggregate(pipeline))
-    return result[0]["maxQty"] if result else 0
+    return {"$group": {"_id": None, "maxQty": {"$max": "$stock.quantity"}}}
 
 
 def find_and_sort_by_price(item_name):
@@ -234,16 +213,49 @@ def find_by_category(item_name, category):
         return False
 
 
-def find_by_brand(item_name, brand):
-    try:
-        if brand is None:
-            return list(mongo.db["items"].find({"product.Product_Name": item_name}))
-        elif brand == brand.get("Product_Brand"):
-            return list(mongo.db["items"].find({"product.Product_Name": item_name, "product.Product_Brand": brand}))
-    except Exception as e:
-        return False
-    
-#search function
+def build_keyword_pattern(user_input):
+    keyword = [k.strip() for k in user_input.replace(",", " ").split()]
+    return keyword
+
+
+def build_or_clause(keywords):
+    return {
+        "$or": [
+            {"product.Product_Name": {"$regex": keywords, "$options": "i"}},
+            {"product.Product_Brand": {"$regex": keywords, "$options": "i"}},
+            {"product.Product_Category": {"$regex": keywords, "$options": "i"}}
+        ]
+    }
+
+
+def build_search_query(user_input):
+    if not user_input:
+        return {}
+    keywords = build_keyword_pattern(user_input)
+    return {"$and": [build_or_clause(kw) for kw in keywords]}
+
+
 def search_items(user_input):
-    query = {"product.Product_Name": {"$regex": user_input, "$options": "i"}}
-    return list(mongo.db["items"].find(query))
+    # add the aggregate=None to parameters, and also add a user_input=None
+    # pipeline = []
+    query = build_search_query(user_input)
+    # if query:
+    #     pipeline.append({"$match": query})
+    # if aggregate:
+    #     pipeline.append(aggregate)
+
+    return list(mongo.db["items"].find(query, {"_id": 0}))
+
+
+def format_aggregate_result(result, toggle):
+    grouped = ["count_per_category", "count_per_name", "count_per_brand"]
+    single = ["average_selling_price", "min_quantity", "max_quantity"]
+
+    if toggle in grouped:
+        return [{"label": r["_id"], "value": r["count"]} for r in result]
+
+    if toggle in single and result:
+        r = result[0]
+        value = next(v for k, v in r.items() if k != "_id")
+        return [{"label": toggle, "value": round(value, 2) if isinstance(value, float) else value}]
+    return result
