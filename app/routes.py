@@ -1,8 +1,10 @@
+from datetime import datetime
 import uuid
 import os
-from flask import Blueprint, current_app, render_template, request, redirect, url_for, session
+from flask import Blueprint, current_app, jsonify, render_template, request, redirect, url_for, session
 from . import mongo
-from .ikea_db.mongodb import add_user, get_all_items, insert_product, delete_One_Item, update_One_Item, login_user, count_total_items, count_per_category, count_per_name
+from .ikea_db.mongodb import add_user, build_stock, get_all_items, insert_product, delete_One_Item, update_One_Item, build_product, build_location, build_pricing
+from .ikea_db.mongodb import login_user, count_total_items, count_per_category, count_per_name, get_manage_items
 from werkzeug.utils import secure_filename
 from bson import ObjectId
 
@@ -78,7 +80,6 @@ def order_product():
 
 # Insert Item
 
-
 @main.route("/insert", methods=["GET", "POST"])
 def insert():
     if request.method == "POST":
@@ -102,7 +103,7 @@ def insert():
 
         insert_product(data)
 
-        return redirect(url_for("main.all_items"))
+        return redirect(url_for("main.insert"))
 
     return render_template("insert_item.html")
 
@@ -114,45 +115,93 @@ def logout():
     return redirect(url_for("main.auth_home"))
 
 
-@main.route("/update", methods=["GET", "POST"])
+@main.route("/update/<product_id>", methods=["POST"])
 def update(product_id):
-    if request.method == "POST":
-        data = request.form.to_dict()
+    data = request.form.to_dict()
+    file = request.files.get("Product_Image_URL")
 
-        file = request.files.get("Product_Image_URL")
+    item = mongo.db.items.find_one({"_id": ObjectId(product_id)})
 
-        # get existing product directly
-        product = current_app.db.products.find_one(
-            {"_id": ObjectId(product_id)})
+    # keep old image if no new upload
+    filename = item["product"].get("Product_image_url") if item else None
 
-        filename = product.get("image_url") if product else None
+    if file and file.filename != "":
+        safe_name = secure_filename(file.filename)
+        filename = f"{uuid.uuid4()}_{safe_name}"
 
-        if file and file.filename != "":
-            safe_name = secure_filename(file.filename)
-            filename = f"{uuid.uuid4()}_{safe_name}"
-
-            upload_path = os.path.join(
-                current_app.root_path,
-                "static/uploads",
-                filename
-            )
-            file.save(upload_path)
-
-        data["image_url"] = filename
-
-        # update directly in MongoDB
-        current_app.db.products.update_one(
-            {"_id": ObjectId(product_id)},
-            {"$set": data}
+        upload_path = os.path.join(
+            current_app.root_path,
+            "static/uploads",
+            filename
         )
+        file.save(upload_path)
 
-        return redirect(url_for("main.all_items"))
+    # 🔥 USE YOUR BUILDERS HERE
+    updated_data = {
+        "product": build_product(
+            data.get("Product_Name"),
+            data.get("Product_Brand"),
+            data.get("Product_Category"),
+            data.get("Product_Description"),
+            filename
+        ),
+        "location": build_location(
+            data.get("warehouse"),
+            data.get("aisle"),
+            data.get("rack"),
+            data.get("bin")
+        ),
+        "stock": build_stock(
+            data.get("quantity"),
+            data.get("unit"),
+            data.get("reorder_level")
+        ),
+        "price": build_pricing(
+            data.get("cost"),
+            data.get("selling_price")
+        ),
+        "updated_at": datetime.now()
+    }
 
-    # fetch product for initial form load
-    product = current_app.db.products.find_one({"_id": ObjectId(product_id)})
+    mongo.db.items.update_one(
+        {"_id": ObjectId(product_id)},
+        {"$set": updated_data}
+    )
 
-    return render_template("update_item.html", product=product)
+    return redirect(url_for("main.manage_items"))
 
+@main.route("/get_item/<id>")
+def get_item(id):
+    item = mongo.db.items.find_one({"_id": ObjectId(id)})
+
+    if not item:
+        return jsonify({"error": "Item not found"}), 404
+
+    return jsonify({
+        "id": str(item["_id"]),
+
+        "name": item["product"]["Product_Name"],
+        "brand": item["product"]["Product_Brand"],
+        "category": item["product"]["Product_Category"],
+        "description": item["product"].get("Product_Description", ""),
+
+        "quantity": item["stock"].get("quantity", ""),
+        "unit": item["stock"].get("unit", ""),
+        "reorder_level": item["stock"].get("reorder_level", ""),
+
+        "warehouse": item["location"].get("warehouse", ""),
+        "aisle": item["location"].get("aisle", ""),
+        "rack": item["location"].get("rack", ""),
+        "bin": item["location"].get("bin", ""),
+
+        "cost": item["price"].get("cost", ""),
+        "selling_price": item["price"].get("selling_price", "")
+    })
+
+@main.route("/delete/<product_id>")
+def delete(product_id):
+    delete_One_Item(product_id)
+    return redirect(url_for("main.manage_items"))
 
 @main.route("/count_all_items")
 def count_all_items():
@@ -164,3 +213,9 @@ def count_all_items():
 def per_category_count():
     item_category_count = count_per_category()
     return render_template("all_items.html", item_category_count=item_category_count)
+
+@main.route('/manage_items')
+def manage_items():
+    print("user" + session.get("user_id", "None"))
+    items = get_manage_items()
+    return render_template("manage_items.html", items = items)

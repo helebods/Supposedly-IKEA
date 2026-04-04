@@ -1,12 +1,25 @@
+from flask import current_app
+
 from app import mongo
 from bson.objectid import ObjectId
 from datetime import datetime
+import os
 
 # View All Items
 
 
 def get_all_items():
     return list(mongo.db["items"].find())
+
+def get_manage_items():
+    projection = {
+        "product.Product_Name": 1,
+        "product.Product_Brand": 1,
+        "product.Product_Category": 1,
+        "product.Product_image_url": 1,
+        "_id": 1 
+    }
+    return list(mongo.db["items"].find({}, projection))
 
 # Insert Item
 
@@ -85,8 +98,8 @@ def insert_product(data):
             datetime.utcnow(),
             data.get("user_id", "admin")
         ),
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
+        "created_at": datetime.now(),
+        "updated_at": datetime.now()
     }
 
     mongo.db["items"].insert_one(item)
@@ -125,6 +138,25 @@ def update_One_Item(product_Id, data):
 
 def delete_One_Item(product_Id):
     try:
+        item = mongo.db["items"].find_one({"_id": ObjectId(product_Id)})
+
+        if item:
+            filename = item.get("product", {}).get("Product_image_url")
+
+        # delete file if exists and not default image
+        try:
+            if filename and filename != "quibolords.jpg":
+                file_path = os.path.join(
+                    current_app.root_path,
+                    "static/uploads",
+                    filename
+                )
+
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+        except Exception as e:
+            print("Error occurred while deleting file:", e)
+
         result = mongo.db["items"].delete_one(
             {"_id": ObjectId(product_Id)})
         return result.deleted_count > 0

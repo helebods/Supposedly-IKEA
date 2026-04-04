@@ -24,21 +24,33 @@
     padding: 2rem;
   }
 
-  .card {
-    display: grid;
-    grid-template-columns: 1fr 420px;
+  .update-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    
+  }
+
+  .update-card {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    width: 100%;
     background: var(--white);
     border-radius: 28px;
     overflow: hidden;
     box-shadow: var(--shadow);
     width: 100%;
     max-width: 960px;
-    animation: fadeUp 0.6s ease both;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
+    transform: translate(-50%, -50%);
+    z-index: 1000;
   }
 
   /* ── LEFT PANEL ── */
@@ -198,7 +210,7 @@
 
   .add-btn {
     width: 100%;
-    padding: 0.9rem;
+    padding: 5px;
     background: var(--indigo);
     color: var(--white);
     font-family: 'Sora', sans-serif;
@@ -219,117 +231,5 @@
   }
 
   .add-btn:active { transform: translateY(0); }
-
-  /* ── RIGHT PANEL ── */
-  .side-panel {
-    background: var(--indigo);
-    padding: 3rem 2.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .log {
-    align-self: flex-end;
-    margin-bottom: 10%;
-    margin-top: -20px;
-    z-index: 1000;
-    color: white;
-    font-size: 0.8rem;
-    text-decoration: none;
-    opacity: 0.8;
-  }
-
-  .log:nth-child(2) {
-    margin-top: -20px;
-  }
-
-  .log:hover {
-    opacity: 1;
-    text-decoration: underline;
-  }
-
-  .side-panel::before {
-    content: '';
-    position: absolute;
-    top: -80px; right: -80px;
-    width: 260px; height: 260px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.07);
-  }
-
-  .side-panel::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; left: -60px;
-    width: 200px; height: 200px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.05);
-  }
-
-  .side-icon {
-    width: 72px; height: 72px;
-    background: rgba(255,255,255,0.15);
-    border-radius: 20px;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 1.75rem;
-    margin-top: -25px;
-    backdrop-filter: blur(4px);
-  }
-
-  .side-icon svg { width: 34px; height: 34px; color: white;}
-
-  .side-panel h2 {
-    font-family: 'Sora', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 0.75rem;
-    line-height: 1.3;
-  }
-
-  .side-panel p {
-    font-size: 0.85rem;
-    color: rgba(255,255,255,0.65);
-    line-height: 1.6;
-    margin-bottom: 2.5rem;
-    font-weight: 300;
-  }
-
-  .tips {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .tip {
-    background: rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 0.85rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    text-align: left;
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .tip-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-    flex-shrink: 0;
-  }
-
-  .tip span {
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.8);
-    line-height: 1.4;
-  }
 
   
