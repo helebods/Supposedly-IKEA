@@ -1,14 +1,14 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-    <title>Insert Item</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/insert_item.css') }}">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit.css') }}">
 </head>
 <body>
-<div class="card">
+
+    <div class="card">
 
     <!-- LEFT: Form -->
     <div class="form-panel">
@@ -120,38 +120,7 @@
 
     </form>
     </div>
-
-    <!-- RIGHT: Side Panel -->
-    <div class="side-panel">
-        <a href="{{ url_for('main.logout') }}" class="log">Logout</a>
-        <a href="{{ url_for('main.manage_items') }}" class="log">Manage</a>
-        <div class="side-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                <line x1="12" y1="22.08" x2="12" y2="12"></line>
-            </svg>
-        </div>
-        <h2>Inventory Management</h2>
-        <p>Keep your warehouse organized and your stock levels optimal with accurate item records.</p>
-        <div class="tips">
-            <div class="tip">
-            <div class="tip-dot"></div>
-                <span>Use a clear product name for easy search and identification.</span>
-            </div>
-            <div class="tip">
-                <div class="tip-dot"></div>
-                <span>Set a reorder level to get notified before stock runs out.</span>
-            </div>
-            <div class="tip">
-                <div class="tip-dot"></div>
-                <span>Specify the exact bin location to speed up warehouse picking.</span>
-            </div>
-        </div>
     </div>
 
-</div>
-
-<script scr="{{ url_for('static', filename='js/johnny.js')}}"></script>
 </body>
 </html>
