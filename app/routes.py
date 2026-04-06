@@ -42,7 +42,7 @@ def signin():
         if user:
             session["user_id"] = str(user["_id"])
 
-            if user.get("email") == "secret@ikea.com":
+            if user.get("email") == "niggers@ikea.com":
                 print("Admin user logged in:", email)
                 session["is_admin"] = True
 
