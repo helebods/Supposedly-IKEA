@@ -4,7 +4,7 @@ import os
 from flask import Blueprint, current_app, jsonify, render_template, request, redirect, url_for, session
 from . import mongo
 from .ikea_db.mongodb import add_user, build_stock, get_all_items, insert_product, delete_One_Item, update_One_Item, build_product, build_location, build_pricing
-from .ikea_db.mongodb import login_user, count_total_items, count_per_category, count_per_name, get_manage_items
+from .ikea_db.mongodb import login_user, count_total_items, count_per_category, count_per_name, get_manage_items, search_items, get_low_stock
 from werkzeug.utils import secure_filename
 from bson import ObjectId
 
@@ -219,47 +219,6 @@ def manage_items():
     print("user" + session.get("user_id", "None"))
     items = get_manage_items()
     return render_template("manage_items.html", items = items)
-
-
-@main.route("/update", methods=["GET", "POST"])
-def update(product_id):
-    if request.method == "POST":
-        data = request.form.to_dict()
-
-        file = request.files.get("Product_Image_URL")
-
-        # get existing product directly
-        product = current_app.db.products.find_one(
-            {"_id": ObjectId(product_id)})
-
-        filename = product.get("image_url") if product else None
-
-        if file and file.filename != "":
-            safe_name = secure_filename(file.filename)
-            filename = f"{uuid.uuid4()}_{safe_name}"
-
-            upload_path = os.path.join(
-                current_app.root_path,
-                "static/uploads",
-                filename
-            )
-            file.save(upload_path)
-
-        data["image_url"] = filename
-
-        # update directly in MongoDB
-        current_app.db.products.update_one(
-            {"_id": ObjectId(product_id)},
-            {"$set": data}
-        )
-
-        return redirect(url_for("main.all_items"))
-
-    # fetch product for initial form load
-    product = current_app.db.products.find_one({"_id": ObjectId(product_id)})
-
-    return render_template("update_item.html", product=product)
-
 
 @main.route("/count_all_items")
 def count_all_items():
