@@ -103,7 +103,7 @@ def insert():
 
         insert_product(data)
 
-        return redirect(url_for("main.all_items"))
+        return redirect(url_for("main.insert"))
     
     return render_template("insert_item.html")
 
@@ -219,20 +219,6 @@ def manage_items():
     print("user" + session.get("user_id", "None"))
     items = get_manage_items()
     return render_template("manage_items.html", items = items)
-
-@main.route("/count_all_items")
-def count_all_items():
-    total_items = count_total_items()
-    return render_template("all_items.html", total_items=total_items)
-
-
-@main.route("/count_per_category")
-def per_category_count():
-    item_category_count = count_per_category()
-    return render_template("all_items.html", item_category_count=item_category_count)
-
-# seacrh
-
 
 @main.route("/search")
 def search():
