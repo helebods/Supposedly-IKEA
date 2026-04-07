@@ -88,6 +88,10 @@ hr {
     to { opacity: 1; transform: translateY(0); }
 }
 
+.item:hover {
+    translate: 0 -4px;
+    box-shadow: var(--shadow), 0 25px 60px rgba(79,70,229,0.3);
+}
 
 .image {
     grid-area: image;
@@ -175,7 +179,7 @@ hr {
 
 .delete-modal .modal-content button {
     margin-top: 20px;
-    padding: 0.5rem 1rem;
+    padding: 12px 18px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -183,7 +187,7 @@ hr {
 
 .delete-modal .modal-content .confirm-btn {
     display: inline-block;
-    padding: 10px 16px;
+    padding: 10px 8px;
     background: #ff6b6b;
     color: var(--white);
     text-decoration: none;

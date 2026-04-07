@@ -52,8 +52,8 @@ def signin():
                 return redirect(url_for("main.insert"))
 
             return redirect(url_for("main.all_items"))
-
-    return render_template("all_items.html")
+        else:
+            return render_template("index.html")
 
 # Sign Up
 @main.route("/signup", methods=["GET","POST"])

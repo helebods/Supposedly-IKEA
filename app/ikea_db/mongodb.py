@@ -95,7 +95,7 @@ def insert_product(data):
         "stock_history": build_stock_history(
             "IN",
             int(data.get("quantity")),
-            datetime.utcnow(),
+            datetime.now(),
             data.get("user_id", "admin")
         ),
         "created_at": datetime.now(),
@@ -119,7 +119,7 @@ def update_One_Item(product_Id, data):
             float(data.get("cost")),
             float(data.get("selling_price"))
         ),
-        "updated_at": datetime.utcnow()
+        "updated_at": datetime.now()
     }
 
     result = mongo.db["items"].update_one(

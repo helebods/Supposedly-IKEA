@@ -32,4 +32,4 @@ Thumbs.db
 #config
 config.py
 
-static/uploads/
+uploads/
