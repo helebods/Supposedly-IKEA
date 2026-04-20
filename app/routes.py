@@ -25,8 +25,14 @@ def all_items():
     if "user_id" not in session:
         return redirect(url_for("main.auth_home"))
 
+    # sort_by = request.args.get("sort_by", "default")
+
+    # if sort_by == "brand":
+    #     items = aggregate_items_by_brand()
+    # else:
     items = get_all_items()
     return render_template("all_items.html", items=items)
+
 
 # Sign In
 
@@ -56,7 +62,9 @@ def signin():
             return render_template("index.html")
 
 # Sign Up
-@main.route("/signup", methods=["GET","POST"])
+
+
+@main.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         firstname = request.form["signup-firstname"]
@@ -104,7 +112,7 @@ def insert():
         insert_product(data)
 
         return redirect(url_for("main.insert"))
-    
+
     return render_template("insert_item.html")
 
 
@@ -170,6 +178,7 @@ def update(product_id):
 
     return redirect(url_for("main.manage_items"))
 
+
 @main.route("/get_item/<id>")
 def get_item(id):
     item = mongo.db.items.find_one({"_id": ObjectId(id)})
@@ -198,10 +207,12 @@ def get_item(id):
         "selling_price": item["price"].get("selling_price", "")
     })
 
+
 @main.route("/delete/<product_id>")
 def delete(product_id):
     delete_One_Item(product_id)
     return redirect(url_for("main.manage_items"))
+
 
 @main.route("/count_all_items")
 def count_all_items():
@@ -214,11 +225,13 @@ def per_category_count():
     item_category_count = count_per_category()
     return render_template("all_items.html", item_category_count=item_category_count)
 
+
 @main.route('/manage_items')
 def manage_items():
     print("user" + session.get("user_id", "None"))
     items = get_manage_items()
-    return render_template("manage_items.html", items = items)
+    return render_template("manage_items.html", items=items)
+
 
 @main.route("/search")
 def search():

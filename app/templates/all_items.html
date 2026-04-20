@@ -10,8 +10,7 @@
     <title>All Items</title>
   </head>
   <body>
-
-<!-- OVERLAY -->
+    <!-- OVERLAY -->
     <div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
     <!-- SLIDE-IN MENU -->
@@ -21,18 +20,31 @@
         <button class="close-btn" onclick="closeMenu()">&#x2715;</button>
       </div>
       <nav class="sidebar-nav">
-        <a href="{{ url_for('main.all_items') }}" class="sidebar-link active">All Items</a>
-        <a href="{{ url_for('main.order_product') }}" class="sidebar-link">Restock Orders</a>
-        <a href="{{ url_for('main.insert') }}" class="sidebar-link">Insert Item</a>
+        <a href="{{ url_for('main.all_items') }}" class="sidebar-link active"
+          >All Items</a
+        >
+        <a href="{{ url_for('main.order_product') }}" class="sidebar-link"
+          >Restock Orders</a
+        >
+        <a href="{{ url_for('main.insert') }}" class="sidebar-link"
+          >Insert Item</a
+        >
       </nav>
       <div class="sidebar-bottom">
-        <a href="{{ url_for('main.logout') }}" class="sidebar-link logout">Logout</a>
+        <a href="{{ url_for('main.logout') }}" class="sidebar-link logout"
+          >Logout</a
+        >
       </div>
     </aside>
 
     <!-- TOPBAR -->
     <header class="topbar">
-      <img src="{{ url_for('static', filename='images/quibs.png') }}" alt="Logo" class="logo" width=60/>
+      <img
+        src="{{ url_for('static', filename='images/quibs.png') }}"
+        alt="Logo"
+        class="logo"
+        width="60"
+      />
       <div class="search-container">
         <form action="/search" method="GET">
           <input
@@ -54,7 +66,7 @@
         <h1>All Items</h1>
         <div class="sort-container">
           <label for="sort-select">Sort By:</label>
-          <select name="sort" id="sort-select">
+          <select name="sort" id="sort-select" onchange="sortItems(this.value)">
             <option value="name">Name</option>
             <option value="brand">Brand</option>
             <option value="category">Category</option>
@@ -66,51 +78,62 @@
           {% for item in items %}
           <div class="card-container">
             <li>
-
               <div class="image-container">
-                <img src="{{ url_for('static', filename='uploads/' + item.product.Product_image_url) }}" alt="{{ item.product.Product_Name }}" width="100"/>
+                <img
+                  src="{{ url_for('static', filename='uploads/' + item.product.Product_image_url) }}"
+                  alt="{{ item.product.Product_Name }}"
+                  width="100"
+                />
               </div>
 
               <div class="description-container">
                 <h3>Product Description</h3>
-                <p><span>Product Name: </span> {{ item.product.Product_Name }}</p>
+                <p>
+                  <span>Product Name: </span> {{ item.product.Product_Name }}
+                </p>
                 <p><span>Brand: </span> {{ item.product.Product_Brand }}</p>
-                <p><span>Category: </span> {{ item.product.Product_Category }}</p>
+                <p>
+                  <span>Category: </span> {{ item.product.Product_Category }}
+                </p>
               </div>
 
               <div class="stock-container">
                 <h3>Stock</h3>
-                <p><span>Quantity: </span> {{ item.stock.quantity }} {{ item.stock.unit }}</p>
+                <p>
+                  <span>Quantity: </span> {{ item.stock.quantity }} {{
+                  item.stock.unit }}
+                </p>
               </div>
 
               <div class="price-container">
                 <p><span>Cost: </span>&#8369; {{ item.price.cost }}</p>
                 <h3>Price</h3>
               </div>
-              
+
               <div class="view-more">
                 <a href="#" class="view-more-btn">View More</a>
               </div>
-
             </li>
           </div>
-        {% endfor %}
-      </ul>
+          {% endfor %}
+        </ul>
       </div>
     </main>
 
-    
-
     <script>
       function openMenu() {
-        document.getElementById('sidebar').classList.add('open');
-        document.getElementById('overlay').classList.add('show');
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("overlay").classList.add("show");
       }
       function closeMenu() {
-        document.getElementById('sidebar').classList.remove('open');
-        document.getElementById('overlay').classList.remove('show');
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("show");
+      }
+      function sortItems(sortValue) {
+        const params = new URLSearchParams();
+        params.set("sort", sortValue);
+        window.location.href = "/all_items?" + params.toString();
       }
     </script>
-
   </body>
 </html>

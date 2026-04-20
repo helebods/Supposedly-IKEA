@@ -11,13 +11,14 @@ import os
 def get_all_items():
     return list(mongo.db["items"].find())
 
+
 def get_manage_items():
     projection = {
         "product.Product_Name": 1,
         "product.Product_Brand": 1,
         "product.Product_Category": 1,
         "product.Product_image_url": 1,
-        "_id": 1 
+        "_id": 1
     }
     return list(mongo.db["items"].find({}, projection))
 
@@ -253,9 +254,9 @@ def build_keyword_pattern(user_input):
 def build_or_clause(keywords):
     return {
         "$or": [
-            {"product.Product_Name": {"$regex": keywords, "$options": "i"}},
-            {"product.Product_Brand": {"$regex": keywords, "$options": "i"}},
-            {"product.Product_Category": {"$regex": keywords, "$options": "i"}}
+            {"product.Product_Name": {"$regex": keywords, "$options": "i"}}
+            # {"product.Product_Brand": {"$regex": keywords, "$options": "i"}},
+            # {"product.Product_Category": {"$regex": keywords, "$options": "i"}}
         ]
     }
 
@@ -301,15 +302,7 @@ def get_low_stock():
 
 # db.<collection>.find({ },{attribute:1})
 # for manage items back end
-def get_manage_items():
-    projection = {
-        "product.Product_Name": 1,
-        "product.Product_Brand": 1,
-        "product.Product_Category": 1,
-        "product.Product_image_url": 1,
-        "_id": 1
-    }
-    return list(mongo.db["items"].find({}, projection))
+
 
 # find({"parameter"}, {attribute: 0})
 # for insert page to check if item already exists, if it does then we can just update the stock and price instead of creating a new entry
@@ -334,3 +327,18 @@ def format_aggregate_result(result, toggle):
         value = next(v for k, v in r.items() if k != "_id")
         return [{"label": toggle, "value": round(value, 2) if isinstance(value, float) else value}]
     return result
+
+
+# def aggregate_items_by_brand():
+#     pipeline = [
+#         {
+#             "$group": {
+#                 "_id": "$product.Product_Brand",
+#                 "count": {"$sum": 1}
+#             }
+#         },
+#         {
+#             "$sort": {"_id": 1}
+#         }
+#     ]
+#     return list(mongo.db["items"].aggregate(pipeline))
