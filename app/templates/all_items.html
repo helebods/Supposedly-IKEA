@@ -60,6 +60,26 @@
       <button class="burger" onclick="openMenu()">&#9776;</button>
     </header>
 
+    <!-- Aggregate functions -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-label">Total Items</span>
+        <span class="stat-value">{{ stats.total_items }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Avg Selling Price</span>
+        <span class="stat-value">&#8369;{{ "%.2f"|format(stats.avg_price) }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Max Quantity</span>
+        <span class="stat-value">{{ stats.max_qty }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Min Quantity</span>
+        <span class="stat-value">{{ stats.min_qty }}</span>
+      </div>
+    </div>
+
     <!-- CONTENT -->
     <main class="content">
       <div class="content-header">

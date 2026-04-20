@@ -272,3 +272,40 @@ body {
 .description-container p span, .stock-container p span, .price-container p span {
     font-weight: 600;
 }
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 250px));
+    gap: 12px;
+    padding: 25px 12px 12px 12px;
+    justify-content: center;
+}
+
+.stat-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+    box-shadow: 0 8px 20px rgba(79,70,229,0.10);
+    transition: box-shadow 0.15s;
+}
+
+.stat-card:hover {
+    box-shadow: 0 12px 30px rgba(79,70,229,0.25);
+}
+
+.stat-label {
+    font-size: 11px;
+    color: #888;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: #4f46e5;
+}

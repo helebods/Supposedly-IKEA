@@ -203,29 +203,27 @@ def login_user(email, password):
 def count_total_items():
     return mongo.db["items"].count_documents({})
 
-
-def count_per_category():
-    return {"$group": {"_id": "$product.Product_Category", "count": {"$sum": 1}}}
-
-
-def count_per_name():
-    return {"$group": {"_id": "$product.Product_Name", "count": {"$sum": 1}}}
-
-
-def count_per_brand():
-    return {"$group": {"_id": "$product.Product_Brand", "count": {"$sum": 1}}}
-
-
 def average_selling_price():
-    return {"$group": {"_id": None, "avgSellingPrice": {"$avg": "$price.selling_price"}}}
+    pipeline = [
+        {"$group": {"_id": None, "avgSellingPrice": {"$avg": "$price.selling_price"}}}
+    ]
+    result = list(mongo.db["items"].aggregate(pipeline))
+    return result[0]["avgSellingPrice"] if result else 0
 
 
 def min_quantity():
-    return {"$group": {"_id": None, "minQty": {"$min": "$stock.quantity"}}}
-
+    pipeline = [
+        {"$group": {"_id": None, "minQty": {"$min": "$stock.quantity"}}}
+    ]
+    result = list(mongo.db["items"].aggregate(pipeline))
+    return result[0]["minQty"] if result else 0
 
 def max_quantity():
-    return {"$group": {"_id": None, "maxQty": {"$max": "$stock.quantity"}}}
+    pipeline = [
+        {"$group": {"_id": None, "maxQty": {"$max": "$stock.quantity"}}}
+    ]
+    result = list(mongo.db["items"].aggregate(pipeline))
+    return result[0]["maxQty"] if result else 0
 
 
 def find_and_sort_by_price(item_name):
