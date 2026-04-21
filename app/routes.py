@@ -11,14 +11,29 @@ from bson import ObjectId
 
 main = Blueprint("main", __name__)
 
+# helper function for stats
+def gets_stats():
+    try:
+        return {
+            "total_items": count_total_items(),
+            "avg_price": average_selling_price(),
+            "min_qty": min_quantity(),
+            "max_qty": max_quantity(),
+        }
+    except Exception as e:
+        print("gets_stats() error:", e)
+        return {
+            "total_items": 0,
+            "avg_price": 0,
+            "min_qty": 0,
+            "max_qty": 0,
+        }
 
 @main.route("/")
 def auth_home():
     return render_template("index.html")
 
-# View All Items
-
-
+# View Al
 @main.route("/all_items")
 def all_items():
 
@@ -32,13 +47,7 @@ def all_items():
     # else:
     items = get_all_items()
 
-    stats = {
-        "total_items": count_total_items(),
-        "avg_price": average_selling_price(),
-        "min_qty": min_quantity(),
-        "max_qty": max_quantity()
-    }
-    return render_template("all_items.html", items=items, stats=stats)
+    return render_template("all_items.html", items=items, stats=gets_stats())
 
 
 # Sign In
@@ -221,18 +230,6 @@ def delete(product_id):
     return redirect(url_for("main.manage_items"))
 
 
-@main.route("/count_all_items")
-def count_all_items():
-    total_items = count_total_items()
-    return render_template("all_items.html", total_items=total_items)
-
-
-@main.route("/count_per_category")
-def per_category_count():
-    item_category_count = count_per_category()
-    return render_template("all_items.html", item_category_count=item_category_count)
-
-
 @main.route('/manage_items')
 def manage_items():
     print("user" + session.get("user_id", "None"))
@@ -247,4 +244,6 @@ def search():
         return redirect(url_for('main.all_items'))
 
     results = search_items(user_input)
-    return render_template('all_items.html', items=results)
+    return render_template('all_items.html', items=results, stats=gets_stats())
+
+

@@ -46,16 +46,16 @@ def build_location(warehouse, aisle, rack, bin):
 
 def build_stock(quantity, unit, reorder_level):
     return {
-        "quantity": quantity,
+        "quantity": int(quantity),
         "unit": unit,
-        "reorder_level": reorder_level
+        "reorder_level": int(reorder_level)
     }
 
 
 def build_pricing(cost, selling_price):
     return {
-        "cost": cost,
-        "selling_price": selling_price
+        "cost": float(cost),
+        "selling_price": float(selling_price)
     }
 
 
