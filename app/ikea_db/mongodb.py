@@ -21,6 +21,14 @@ def get_manage_items():
     }
     return list(mongo.db["items"].find({}, projection))
 
+def get_recent_items(limit=3):
+    return list(
+        mongo.db["items"]
+        .find()
+        .sort("_id", -1)
+        .limit(limit)
+    )
+
 # Insert Item
 
 

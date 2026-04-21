@@ -117,6 +117,7 @@
     </div>
 
     <button class="add-btn" type="submit">Add Item</button>
+    <a href="{{ url_for('main.all_items') }}" class="secondary-btn">View All Items</a>
 
     </form>
     </div>
@@ -132,21 +133,40 @@
                 <line x1="12" y1="22.08" x2="12" y2="12"></line>
             </svg>
         </div>
-        <h2>Inventory Management</h2>
-        <p>Keep your warehouse organized and your stock levels optimal with accurate item records.</p>
-        <div class="tips">
-            <div class="tip">
-            <div class="tip-dot"></div>
-                <span>Use a clear product name for easy search and identification.</span>
-            </div>
-            <div class="tip">
-                <div class="tip-dot"></div>
-                <span>Set a reorder level to get notified before stock runs out.</span>
-            </div>
-            <div class="tip">
-                <div class="tip-dot"></div>
-                <span>Specify the exact bin location to speed up warehouse picking.</span>
-            </div>
+        <h2>Recently Added Items</h2>
+        <p>Here are the top 3 most recently added products.</p>
+        <div class="recent-items">
+          {% if recent_items %}
+          <ul class="recent-list">
+            {% for item in recent_items %}
+            <li class="card-container">
+              <div class="image-container">
+                <img src="{{ url_for('static', filename='uploads/' + item.product.Product_image_url) }}" alt="{{ item.product.Product_Name }}" />
+              </div>
+
+              <div class="card-content">
+                <div class="description-content">
+                  <h3>Product Description</h3>
+                  <p><span>Product:</span> {{ item.product.Product_Name }}</p>
+                  <p><span>Brand:</span> {{ item.product.Product_Brand }}</p>
+                  <p><span>Cost:</span> &#8369; {{ item.price.cost }}</p>
+                  <div class="category-badge">{{ item.product.Product_Category }}</div>
+                </div>
+
+                <div class="meta-content">
+                  <div class="stock-card">
+                    <div class="stock-title">Stock</div>
+                    <div class="stock-value">Qty: {{ item.stock.quantity }} {{ item.stock.unit }}</div>
+                  </div>
+                  <a href="#" class="view-more-btn">View More</a>
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+            <p>No recent items yet.</p>
+          {% endif %}
         </div>
     </div>
 
