@@ -4,7 +4,7 @@ import os
 from flask import Blueprint, current_app, jsonify, render_template, request, redirect, url_for, session
 from . import mongo
 from .ikea_db.mongodb import add_user, build_stock, get_all_items, insert_product, delete_One_Item, update_One_Item, build_product, build_location, build_pricing
-from .ikea_db.mongodb import login_user, count_total_items, get_manage_items, search_items, get_low_stock, average_selling_price, min_quantity, max_quantity
+from .ikea_db.mongodb import login_user, count_total_items, get_manage_items, search_items, get_low_stock, average_selling_price, min_quantity, max_quantity, get_item_by_id
 from werkzeug.utils import secure_filename
 from bson import ObjectId
 
@@ -160,7 +160,7 @@ def update(product_id):
         )
         file.save(upload_path)
 
-    # 🔥 USE YOUR BUILDERS HERE
+    #USE YOUR BUILDERS HERE
     updated_data = {
         "product": build_product(
             data.get("Product_Name"),
@@ -246,4 +246,11 @@ def search():
     results = search_items(user_input)
     return render_template('all_items.html', items=results, stats=gets_stats())
 
-
+@main.route("/item/<item_id>")
+def item_detail(item_id):
+    if "user_id" not in session:
+        return redirect(url_for("main.auth_home"))
+    item = get_item_by_id(item_id)
+    if not item:
+        return "Item not found"
+    return render_template("item_des.html", item=item)

@@ -326,6 +326,9 @@ def format_aggregate_result(result, toggle):
         return [{"label": toggle, "value": round(value, 2) if isinstance(value, float) else value}]
     return result
 
+def get_item_by_id(item_id):
+    return mongo.db["items"].find_one({"_id": ObjectId(item_id)})
+
 
 # def aggregate_items_by_brand():
 #     pipeline = [

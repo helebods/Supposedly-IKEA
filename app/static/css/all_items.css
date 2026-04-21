@@ -30,7 +30,7 @@ body {
     right: -260px;
     width: 260px;
     height: 100vh;
-    background: #3730a3;
+    background: #8580d1;
     display: flex;
     flex-direction: column;
     z-index: 100;
@@ -91,7 +91,7 @@ body {
 }
 .sidebar-link.active {
     background: #ffcc00;
-    color: #3730a3;
+    color: #8580d1;
     font-weight: 500;
     margin: 0 12px;
     border-radius: 8px;
@@ -103,8 +103,8 @@ body {
 }
 .sidebar-link.logout { color: rgba(255,255,255,0.6); }
 .sidebar-link.logout:hover {
-    color: #ff6b6b;
-    background: rgba(255,107,107,0.1);
+    color: #fff;
+    background: rgba(255, 204, 0, 0.389);
     margin: 0 12px;
     border-radius: 8px;
 }
@@ -139,28 +139,28 @@ body {
     transition: border 0.15s;
     align-self: center;
 }
-.search-input:focus { border-color: #4f46e5; }
+.search-input:focus { border-color: #8580d1; }
 
 .search-btn {
     padding: 9px 20px;
-    background: #4f46e5;
+    background: #8580d1;
     color: #fff;
     border: none;
     border-radius: 20px;
     font-size: 14px;
     cursor: pointer;
 }
-.search-btn:hover { background: #4f46e5; }
+.search-btn:hover { background: #8580d1; }
 
 .burger {
     background: none;
     border: none;
     font-size: 22px;
     cursor: pointer;
-    color: #4f46e5;
+    color: #8580d1;
     padding: 4px 8px;
 }
-.burger:hover { color: #4f46e5; }
+.burger:hover { color: #8580d1; }
 
 /* CONTENT */
 .content {
@@ -256,8 +256,8 @@ body {
 
 .description-container h3, .stock-container h3, .price-container h3 {
     font-size: 16px;
-    color: #4f46e5;
-    border-bottom: #3730a3 solid 1px;
+    color: #8580d1;
+    border-bottom: #8580d1 solid 1px;
     border-bottom-left-radius: 4px;
     margin-bottom: 4px;
     font-weight: 600;
@@ -307,5 +307,5 @@ body {
 .stat-value {
     font-size: 20px;
     font-weight: 600;
-    color: #4f46e5;
+    color: #8580d1;
 }
