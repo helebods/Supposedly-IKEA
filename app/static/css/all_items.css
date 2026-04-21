@@ -191,9 +191,131 @@ body {
     margin-left: 20px;
 }
 
+.content-header .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.results-count {
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
 .content-header .sort-container {
     margin-right: 20px;
+}
 
+.filters-container {
+    margin: 20px 0;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.filters-container form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-group h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+}
+
+.filter-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.filter-row select,
+.filter-row input {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.filter-row select {
+    min-width: 160px;
+}
+
+.filter-row input {
+    min-width: 120px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.filter-btn {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.filter-btn:hover {
+    background: #4338ca;
+}
+
+.clear-btn {
+    color: #6b7280;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 10px 20px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.no-results {
+    text-align: center;
+    padding: 40px 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.no-results h3 {
+    color: #374151;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.no-results p {
+    color: #6b7280;
+    margin: 0;
+}
+
+.no-results a {
+    color: #4f46e5;
+    text-decoration: none;
+}
+
+.no-results a:hover {
+    text-decoration: underline;
 }
 
 .container {

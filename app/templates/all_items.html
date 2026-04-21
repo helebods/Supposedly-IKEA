@@ -51,17 +51,68 @@
     <!-- CONTENT -->
     <main class="content">
       <div class="content-header">
-        <h1>All Items</h1>
-        <div class="sort-container">
-          <label for="sort-select">Sort By:</label>
-          <select name="sort" id="sort-select">
-            <option value="name">Name</option>
-            <option value="brand">Brand</option>
-            <option value="category">Category</option>
-          </select>
+        <div class="header-top">
+          <h1>All Items</h1>
+          {% if items %}
+          <div class="results-count">
+            <span>Showing {{ items|length }} item{{ items|length != 1 and 's' or '' }}</span>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="filters-container">
+          <form method="GET" action="{{ url_for('main.all_items') }}" id="filter-form">
+            <div class="filter-group">
+              <h3>View By</h3>
+              <div class="filter-row">
+                <select name="view_by" id="view-by-select">
+                  <option value="all">All Fields</option>
+                  <option value="name">Name Only</option>
+                  <option value="brand">Brand Only</option>
+                  <option value="category">Category Only</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <h3>Quantity Filters</h3>
+              <div class="filter-row">
+                <select name="quantity_operator" id="quantity-operator">
+                  <option value="">Select Operator</option>
+                  <option value="lt">Less than (&lt;)</option>
+                  <option value="lte">Less than or equal (≤)</option>
+                  <option value="gt">Greater than (&gt;)</option>
+                  <option value="gte">Greater than or equal (≥)</option>
+                  <option value="eq">Equal to (=)</option>
+                </select>
+                <input type="number" name="quantity_value" id="quantity-value" placeholder="Enter quantity" min="0">
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <h3>Price Filters</h3>
+              <div class="filter-row">
+                <select name="price_operator" id="price-operator">
+                  <option value="">Select Operator</option>
+                  <option value="lt">Less than (&lt;)</option>
+                  <option value="lte">Less than or equal (≤)</option>
+                  <option value="gt">Greater than (&gt;)</option>
+                  <option value="gte">Greater than or equal (≥)</option>
+                  <option value="eq">Equal to (=)</option>
+                </select>
+                <input type="number" name="price_value" id="price-value" placeholder="Enter price" min="0" step="0.01">
+              </div>
+            </div>
+
+            <div class="filter-actions">
+              <button type="submit" class="filter-btn">Apply Filters</button>
+              <a href="{{ url_for('main.all_items') }}" class="clear-btn">Clear Filters</a>
+            </div>
+          </form>
         </div>
       </div>
       <div class="container">
+        {% if items %}
         <ul>
           {% for item in items %}
           <div class="card-container">
@@ -73,9 +124,17 @@
 
               <div class="description-container">
                 <h3>Product Description</h3>
+                {% if view_by == 'name' %}
+                <p><span>Product Name: </span> {{ item.product.Product_Name }}</p>
+                {% elif view_by == 'brand' %}
+                <p><span>Brand: </span> {{ item.product.Product_Brand }}</p>
+                {% elif view_by == 'category' %}
+                <p><span>Category: </span> {{ item.product.Product_Category }}</p>
+                {% else %}
                 <p><span>Product Name: </span> {{ item.product.Product_Name }}</p>
                 <p><span>Brand: </span> {{ item.product.Product_Brand }}</p>
                 <p><span>Category: </span> {{ item.product.Product_Category }}</p>
+                {% endif %}
               </div>
 
               <div class="stock-container">
@@ -96,10 +155,14 @@
           </div>
         {% endfor %}
       </ul>
+      {% else %}
+        <div class="no-results">
+          <h3>No items found</h3>
+          <p>No items match your current filter criteria. Try adjusting your filters or <a href="{{ url_for('main.all_items') }}">clear all filters</a>.</p>
+        </div>
+      {% endif %}
       </div>
     </main>
-
-    
 
     <script>
       function openMenu() {
@@ -110,6 +173,53 @@
         document.getElementById('sidebar').classList.remove('open');
         document.getElementById('overlay').classList.remove('show');
       }
+
+      // Filter form enhancements
+      document.addEventListener('DOMContentLoaded', function() {
+        const filterForm = document.getElementById('filter-form');
+        const quantityOperator = document.getElementById('quantity-operator');
+        const priceOperator = document.getElementById('price-operator');
+        const quantityValue = document.getElementById('quantity-value');
+        const priceValue = document.getElementById('price-value');
+        const viewBySelect = document.getElementById('view-by-select');
+
+        function toggleInputs() {
+          quantityValue.disabled = !quantityOperator.value;
+          priceValue.disabled = !priceOperator.value;
+        }
+
+        quantityOperator.addEventListener('change', toggleInputs);
+        priceOperator.addEventListener('change', toggleInputs);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('quantity_operator')) {
+          quantityOperator.value = urlParams.get('quantity_operator');
+          quantityValue.value = urlParams.get('quantity_value') || '';
+        }
+        if (urlParams.get('price_operator')) {
+          priceOperator.value = urlParams.get('price_operator');
+          priceValue.value = urlParams.get('price_value') || '';
+        }
+        if (urlParams.get('view_by')) {
+          viewBySelect.value = urlParams.get('view_by');
+        }
+        toggleInputs();
+
+        filterForm.addEventListener('submit', function(e) {
+          const quantityOp = quantityOperator.value;
+          const quantityVal = quantityValue.value;
+          const priceOp = priceOperator.value;
+          const priceVal = priceValue.value;
+
+          if ((quantityOp && !quantityVal) || (priceOp && !priceVal)) {
+            e.preventDefault();
+            alert('Please enter a value for the selected filter operator.');
+            return false;
+          }
+
+          return true;
+        });
+      });
     </script>
 
   </body>
