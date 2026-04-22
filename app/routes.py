@@ -4,7 +4,7 @@ import os
 from flask import Blueprint, current_app, jsonify, render_template, request, redirect, url_for, session
 from . import mongo
 from .ikea_db.mongodb import add_user, build_stock, get_all_items, insert_product, delete_One_Item, update_One_Item, build_product, build_location, build_pricing
-from .ikea_db.mongodb import login_user, count_total_items, get_manage_items, search_items, get_low_stock, average_selling_price, min_quantity, max_quantity, get_item_by_id
+from .ikea_db.mongodb import login_user, count_total_items, get_manage_items, search_items, get_low_stock, average_selling_price, min_quantity, max_quantity, get_item_by_id, get_recent_items
 from werkzeug.utils import secure_filename
 from bson import ObjectId
 
@@ -129,7 +129,8 @@ def insert():
 
         return redirect(url_for("main.insert"))
 
-    return render_template("insert_item.html")
+    recent_items = get_recent_items()
+    return render_template("insert_item.html", recent_items=recent_items)
 
 
 @main.route("/logout")
