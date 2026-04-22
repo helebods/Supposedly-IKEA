@@ -14,6 +14,45 @@
     />
   </head>
   <body>
+    <!-- OVERLAY -->
+    <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+    <!-- SLIDE-IN MENU -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">Warehouse</div>
+        <button class="close-btn" onclick="closeMenu()">&#x2715;</button>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('main.all_items') }}" class="sidebar-link"
+          >All Items</a
+        >
+        <a href="{{ url_for('main.manage_items') }}" class="sidebar-link"
+          >Manage Items</a
+        >
+        <a href="{{ url_for('main.insert') }}" class="sidebar-link  active"
+          >Insert Item</a
+        >
+      </nav>
+      <div class="sidebar-bottom">
+        <a href="{{ url_for('main.logout') }}" class="sidebar-link logout"
+          >Logout</a
+        >
+      </div>
+    </aside>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <img
+        src="{{ url_for('static', filename='images/quibs.png') }}"
+        alt="Logo"
+        class="logo"
+        width="200"
+      />
+      </div>
+      <button class="burger" onclick="openMenu()">&#9776;</button>
+    </header>
+
     <div class="card">
       <!-- LEFT: Form -->
       <div class="form-panel">
@@ -166,8 +205,6 @@
 
       <!-- RIGHT: Side Panel -->
       <div class="side-panel">
-        <a href="{{ url_for('main.logout') }}" class="log">Logout</a>
-        <a href="{{ url_for('main.manage_items') }}" class="log">Manage</a>
         <div class="side-icon">
           <svg
             viewBox="0 0 24 24"
@@ -208,9 +245,6 @@
                   <div class="stock-card">
                     <div class="stock-title">Stock</div>
                     <div class="stock-value">Qty: {{ item.stock.quantity }} {{ item.stock.unit }}</div>
-                  </div>
-                  <a href="#" class="view-more-btn">View More</a>
-                </div>
               </div>
             </li>
             {% endfor %}
@@ -222,6 +256,6 @@
       </div>
     </div>
 
-    <script scr="{{ url_for('static', filename='js/johnny.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/johnny.js')}}"></script>
   </body>
 </html>

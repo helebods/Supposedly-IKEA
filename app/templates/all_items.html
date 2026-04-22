@@ -23,8 +23,8 @@
         <a href="{{ url_for('main.all_items') }}" class="sidebar-link active"
           >All Items</a
         >
-        <a href="{{ url_for('main.order_product') }}" class="sidebar-link"
-          >Restock Orders</a
+        <a href="{{ url_for('main.manage_items') }}" class="sidebar-link"
+          >Manage Items</a
         >
         <a href="{{ url_for('main.insert') }}" class="sidebar-link"
           >Insert Item</a
@@ -43,7 +43,8 @@
         src="{{ url_for('static', filename='images/quibs.png') }}"
         alt="Logo"
         class="logo"
-        width="60"
+        width="200"
+        
       />
       <div class="search-container">
         <form action="/search" method="GET">
@@ -85,11 +86,6 @@
       <div class="content-header">
         <div class="header-top">
           <h1>All Items</h1>
-          {% if items %}
-          <div class="results-count">
-            <span>Showing {{ items|length }} item{{ items|length != 1 and 's' or '' }}</span>
-          </div>
-          {% endif %}
         </div>
 
         <div class="filters-container">
