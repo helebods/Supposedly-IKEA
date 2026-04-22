@@ -6,11 +6,53 @@ from datetime import datetime
 import os
 
 # View All Items
+def get_all_items(query=None, projection=None, sort=None, limit=None):
+    if query is None:
+        query = {}
+
+    cursor = mongo.db["items"].find(query, projection)
+
+    if sort:
+        cursor = cursor.sort(sort)
+
+    if limit:
+        cursor = cursor.limit(limit)
+
+    return list(cursor)
 
 
-def get_all_items():
-    return list(mongo.db["items"].find())
+def find_by_product_name(name):
+    return list(mongo.db["items"].find({"product.Product_Name": name}))
 
+
+def find_with_include_projection(include_fields):
+    projection = {field: 1 for field in include_fields}
+    projection["_id"] = 1
+    projection["product.Product_image_url"] = 1
+    projection["stock.quantity"] = 1
+    projection["stock.unit"] = 1
+    projection["price.cost"] = 1
+    return list(mongo.db["items"].find({}, projection))
+
+
+def find_with_exclude_projection(exclude_fields):
+    projection = {field: 0 for field in exclude_fields}
+    return list(mongo.db["items"].find({}, projection))
+
+
+def find_by_category_with_include(category, include_fields):
+    projection = {field: 1 for field in include_fields}
+    projection["_id"] = 1
+    projection["product.Product_image_url"] = 1
+    projection["stock.quantity"] = 1
+    projection["stock.unit"] = 1
+    projection["price.cost"] = 1
+    return list(mongo.db["items"].find({"product.Product_Category": category}, projection))
+
+
+def find_by_category_with_exclude(category, exclude_fields):
+    projection = {field: 0 for field in exclude_fields}
+    return list(mongo.db["items"].find({"product.Product_Category": category}, projection))
 
 def get_manage_items():
     projection = {

@@ -5,6 +5,7 @@ from flask import Blueprint, current_app, jsonify, render_template, request, red
 from . import mongo
 from .ikea_db.mongodb import add_user, build_stock, get_all_items, insert_product, delete_One_Item, update_One_Item, build_product, build_location, build_pricing
 from .ikea_db.mongodb import login_user, count_total_items, get_manage_items, search_items, get_low_stock, average_selling_price, min_quantity, max_quantity, get_item_by_id, get_recent_items
+from .ikea_db.mongodb import find_by_product_name, find_with_include_projection, find_with_exclude_projection, find_by_category_with_include, find_by_category_with_exclude
 from werkzeug.utils import secure_filename
 from bson import ObjectId
 
@@ -45,9 +46,98 @@ def all_items():
     # if sort_by == "brand":
     #     items = aggregate_items_by_brand()
     # else:
-    items = get_all_items()
+    query = {}
+    projection = None
+    sort = None
+    limit = None
 
-    return render_template("all_items.html", items=items, stats=gets_stats())
+    args = request.args
+
+    if 'quantity_operator' in args and 'quantity_value' in args and args['quantity_value']:
+        operator = args['quantity_operator']
+        value = int(args['quantity_value'])
+        if operator == 'lt':
+            query['stock.quantity'] = {'$lt': value}
+        elif operator == 'lte':
+            query['stock.quantity'] = {'$lte': value}
+        elif operator == 'gt':
+            query['stock.quantity'] = {'$gt': value}
+        elif operator == 'gte':
+            query['stock.quantity'] = {'$gte': value}
+        elif operator == 'eq':
+            query['stock.quantity'] = value
+
+    if 'price_operator' in args and 'price_value' in args and args['price_value']:
+        operator = args['price_operator']
+        value = float(args['price_value'])
+        if operator == 'lt':
+            query['price.cost'] = {'$lt': value}
+        elif operator == 'lte':
+            query['price.cost'] = {'$lte': value}
+        elif operator == 'gt':
+            query['price.cost'] = {'$gt': value}
+        elif operator == 'gte':
+            query['price.cost'] = {'$gte': value}
+        elif operator == 'eq':
+            query['price.cost'] = value
+
+    if 'category' in args:
+        query['product.Product_Category'] = args['category']
+    if 'brand' in args:
+        query['product.Product_Brand'] = args['brand']
+    if 'name' in args:
+        query['product.Product_Name'] = {"$regex": args['name'], "$options": "i"}
+
+    if 'not_category' in args:
+        query['product.Product_Category'] = {"$not": {"$eq": args['not_category']}}
+
+    if 'fields' in args:
+        projection = {}
+        fields = args['fields'].split(',')
+        for field in fields:
+            if field.startswith('-'):
+                projection[field[1:]] = 0
+            else:
+                projection[field] = 1
+
+    view_by = args.get('view_by', 'all')
+
+    if view_by == 'name':
+        projection = {
+            "product.Product_Name": 1,
+            "_id": 1,
+            "product.Product_image_url": 1,
+            "stock.quantity": 1,
+            "stock.unit": 1,
+            "price.cost": 1
+        }
+    elif view_by == 'brand':
+        projection = {
+            "product.Product_Brand": 1,
+            "_id": 1,
+            "product.Product_image_url": 1,
+            "stock.quantity": 1,
+            "stock.unit": 1,
+            "price.cost": 1
+        }
+    elif view_by == 'category':
+        projection = {
+            "product.Product_Category": 1,
+            "_id": 1,
+            "product.Product_image_url": 1,
+            "stock.quantity": 1,
+            "stock.unit": 1,
+            "price.cost": 1
+        }
+    else:
+        projection = None
+
+    if 'limit' in args:
+        limit = int(args['limit'])
+
+    items = get_all_items(query=query, projection=projection, sort=sort, limit=limit)
+
+    return render_template("all_items.html", items=items, stats=gets_stats(), view_by=view_by)
 
 
 # Sign In
