@@ -10,6 +10,42 @@
     
 </head>
 <body>
+    <!-- SLIDE-IN MENU -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">Warehouse</div>
+        <button class="close-btn" onclick="closeMenu()">&#x2715;</button>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('main.all_items') }}" class="sidebar-link"
+          >All Items</a
+        >
+        <a href="{{ url_for('main.manage_items') }}" class="sidebar-link  active"
+          >Manage Items</a
+        >
+        <a href="{{ url_for('main.insert') }}" class="sidebar-link"
+          >Insert Item</a
+        >
+      </nav>
+      <div class="sidebar-bottom">
+        <a href="{{ url_for('main.logout') }}" class="sidebar-link logout"
+          >Logout</a
+        >
+      </div>
+    </aside>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <img
+        src="{{ url_for('static', filename='images/quibs.png') }}"
+        alt="Logo"
+        class="logo"
+        width="200"
+      />
+      </div>
+      <button class="burger" onclick="openMenu()">&#9776;</button>
+    </header>
+
     <div class="card">
         <h1 class="head">Manage Items</h1>
         <hr>
