@@ -129,11 +129,11 @@
         document.getElementById("sidebar").classList.remove("open");
         document.getElementById("overlay").classList.remove("show");
       }
-      function sortItems(sortValue) {
+      {% comment %} function sortItems(sortValue) {
         const params = new URLSearchParams();
         params.set("sort", sortValue);
         window.location.href = "/all_items?" + params.toString();
-      }
+      } {% endcomment %}
     </script>
   </body>
 </html>
