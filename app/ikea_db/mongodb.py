@@ -341,7 +341,7 @@ def get_low_stock():
         "stock.unit": 1,
         "stock.reorder_level": 1,
         "location": 1,
-        "_id": 0
+        "_id": 1
     }
     return list(mongo.db["items"].find(
         {"$expr": {"$lt": ["$stock.quantity", "$stock.reorder_level"]}},
@@ -394,3 +394,35 @@ def get_item_by_id(item_id):
 #         }
 #     ]
 #     return list(mongo.db["items"].aggregate(pipeline))
+
+
+def generate_order_number():
+    count = mongo.db["orders"].count_documents({})
+    return f"ORD-{count+1:04d}"
+
+def build_order(items, total_cost, ordered_by):
+    return {
+        "order_number": generate_order_number(),
+        "ordered_by": ObjectId(ordered_by),
+        "items":[
+            {
+            "item_id": ObjectId(item["item_id"]),
+            "product_name": item["product_name"],
+            "quantity": int(item["quantity"]),
+            "unit_cost": float(item["unit_cost"]),
+            "total_cost": float(total_cost)
+            }
+            for item in items
+        ],
+        "created_at": datetime.now()
+    }
+
+def insert_order(user_id, items, total_cost):
+    print(">>> insert_order called", user_id, items, total_cost)
+    order = build_order(items, total_cost, user_id)
+    print(">>> order built:", order)  # ← and this
+    mongo.db["orders"].insert_one(order)
+    return True 
+
+def get_orders_by_user(user_id):
+    return list(mongo.db["orders"].find({"ordered_by": ObjectId(user_id)}))
