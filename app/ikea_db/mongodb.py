@@ -409,7 +409,7 @@ def build_order(items, total_cost, ordered_by):
             "item_id": ObjectId(item["item_id"]),
             "product_name": item["product_name"],
             "quantity": int(item["quantity"]),
-            "unit_cost": float(item["unit_cost"]),
+            "unit_cost": float(item["unit_cost"]), 
             "total_cost": float(total_cost)
             }
             for item in items
