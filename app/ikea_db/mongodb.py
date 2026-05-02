@@ -8,8 +8,53 @@ import os
 # View All Items
 
 
-def get_all_items():
-    return list(mongo.db["items"].find())
+def get_all_items(query=None, projection=None, sort=None, limit=None):
+    if query is None:
+        query = {}
+
+    cursor = mongo.db["items"].find(query, projection)
+
+    if sort:
+        cursor = cursor.sort(sort)
+
+    if limit:
+        cursor = cursor.limit(limit)
+
+    return list(cursor)
+
+
+def find_by_product_name(name):
+    return list(mongo.db["items"].find({"product.Product_Name": name}))
+
+
+def find_with_include_projection(include_fields):
+    projection = {field: 1 for field in include_fields}
+    projection["_id"] = 1
+    projection["product.Product_image_url"] = 1
+    projection["stock.quantity"] = 1
+    projection["stock.unit"] = 1
+    projection["price.cost"] = 1
+    return list(mongo.db["items"].find({}, projection))
+
+
+def find_with_exclude_projection(exclude_fields):
+    projection = {field: 0 for field in exclude_fields}
+    return list(mongo.db["items"].find({}, projection))
+
+
+def find_by_category_with_include(category, include_fields):
+    projection = {field: 1 for field in include_fields}
+    projection["_id"] = 1
+    projection["product.Product_image_url"] = 1
+    projection["stock.quantity"] = 1
+    projection["stock.unit"] = 1
+    projection["price.cost"] = 1
+    return list(mongo.db["items"].find({"product.Product_Category": category}, projection))
+
+
+def find_by_category_with_exclude(category, exclude_fields):
+    projection = {field: 0 for field in exclude_fields}
+    return list(mongo.db["items"].find({"product.Product_Category": category}, projection))
 
 
 def get_manage_items():
@@ -21,6 +66,16 @@ def get_manage_items():
         "_id": 1
     }
     return list(mongo.db["items"].find({}, projection))
+
+
+def get_recent_items(limit=3):
+    return list(
+        mongo.db["items"]
+        .find()
+        .sort("_id", -1)
+        .limit(limit)
+    )
+
 
 # Insert Item
 
@@ -46,16 +101,16 @@ def build_location(warehouse, aisle, rack, bin):
 
 def build_stock(quantity, unit, reorder_level):
     return {
-        "quantity": quantity,
+        "quantity": int(quantity),
         "unit": unit,
-        "reorder_level": reorder_level
+        "reorder_level": int(reorder_level)
     }
 
 
 def build_pricing(cost, selling_price):
     return {
-        "cost": cost,
-        "selling_price": selling_price
+        "cost": float(cost),
+        "selling_price": float(selling_price)
     }
 
 
@@ -66,6 +121,8 @@ def build_stock_history(type, quantity, date, handled_by):
         "date": date,
         "handled_by": handled_by
     }
+
+# insert Item
 
 
 def insert_product(data):
@@ -204,28 +261,28 @@ def count_total_items():
     return mongo.db["items"].count_documents({})
 
 
-def count_per_category():
-    return {"$group": {"_id": "$product.Product_Category", "count": {"$sum": 1}}}
-
-
-def count_per_name():
-    return {"$group": {"_id": "$product.Product_Name", "count": {"$sum": 1}}}
-
-
-def count_per_brand():
-    return {"$group": {"_id": "$product.Product_Brand", "count": {"$sum": 1}}}
-
-
 def average_selling_price():
-    return {"$group": {"_id": None, "avgSellingPrice": {"$avg": "$price.selling_price"}}}
+    pipeline = [
+        {"$group": {"_id": None, "avgSellingPrice": {"$avg": "$price.selling_price"}}}
+    ]
+    result = list(mongo.db["items"].aggregate(pipeline))
+    return result[0]["avgSellingPrice"] if result else 0
 
 
 def min_quantity():
-    return {"$group": {"_id": None, "minQty": {"$min": "$stock.quantity"}}}
+    pipeline = [
+        {"$group": {"_id": None, "minQty": {"$min": "$stock.quantity"}}}
+    ]
+    result = list(mongo.db["items"].aggregate(pipeline))
+    return result[0]["minQty"] if result else 0
 
 
 def max_quantity():
-    return {"$group": {"_id": None, "maxQty": {"$max": "$stock.quantity"}}}
+    pipeline = [
+        {"$group": {"_id": None, "maxQty": {"$max": "$stock.quantity"}}}
+    ]
+    result = list(mongo.db["items"].aggregate(pipeline))
+    return result[0]["maxQty"] if result else 0
 
 
 def find_and_sort_by_price(item_name):
@@ -292,7 +349,7 @@ def get_low_stock():
         "stock.unit": 1,
         "stock.reorder_level": 1,
         "location": 1,
-        "_id": 0
+        "_id": 1
     }
     return list(mongo.db["items"].find(
         {"$expr": {"$lt": ["$stock.quantity", "$stock.reorder_level"]}},
@@ -329,6 +386,10 @@ def format_aggregate_result(result, toggle):
     return result
 
 
+def get_item_by_id(item_id):
+    return mongo.db["items"].find_one({"_id": ObjectId(item_id)})
+
+
 # def aggregate_items_by_brand():
 #     pipeline = [
 #         {
@@ -342,3 +403,38 @@ def format_aggregate_result(result, toggle):
 #         }
 #     ]
 #     return list(mongo.db["items"].aggregate(pipeline))
+
+
+def generate_order_number():
+    count = mongo.db["orders"].count_documents({})
+    return f"ORD-{count+1:04d}"
+
+
+def build_order(items, total_cost, ordered_by):
+    return {
+        "order_number": generate_order_number(),
+        "ordered_by": ObjectId(ordered_by),
+        "items": [
+            {
+                "item_id": ObjectId(item["item_id"]),
+                "product_name": item["product_name"],
+                "quantity": int(item["quantity"]),
+                "unit_cost": float(item["unit_cost"]),
+                "total_cost": float(total_cost)
+            }
+            for item in items
+        ],
+        "created_at": datetime.now()
+    }
+
+
+def insert_order(user_id, items, total_cost):
+    print(">>> insert_order called", user_id, items, total_cost)
+    order = build_order(items, total_cost, user_id)
+    print(">>> order built:", order)  # ← and this
+    mongo.db["orders"].insert_one(order)
+    return True
+
+
+def get_orders_by_user(user_id):
+    return list(mongo.db["orders"].find({"ordered_by": ObjectId(user_id)}))

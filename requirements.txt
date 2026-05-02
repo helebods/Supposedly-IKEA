@@ -11,6 +11,4 @@ mysql-connector-python==9.6.0
 pymongo==4.16.0
 python-dotenv==1.2.2
 Werkzeug==3.1.6
-#sample thingy
-#tite
-#burat
+
