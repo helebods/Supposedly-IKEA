@@ -36,7 +36,7 @@ def gets_stats():
 def auth_home():
     return render_template("index.html")
 
-# View Al
+# View All
 
 
 @main.route("/all_items")
@@ -45,7 +45,7 @@ def all_items():
         return redirect(url_for("main.auth_home"))
 
     items = get_all_items()
-    return render_template("all_items.html", items=items, stats=get_stats)
+    return render_template("all_items.html", items=items, stats=gets_stats())
 
 # Sign In
 
