@@ -224,15 +224,17 @@ def delete_One_Item(product_Id):
 
 
 def add_user(first_name, last_name, email, password):
-    if mongo.db["users"].find_one({"email": email}):
+    if mongo.db["users"].find_one({"credentials.email": email}):
         print("User already exists:", email)
         return False
 
     user = {
         "first_name": first_name,
         "last_name": last_name,
-        "email": email,
-        "password": password
+        "credentials": {
+            "email": email,
+            "password": password
+        }
     }
 
     mongo.db["users"].insert_one(user)
@@ -241,14 +243,14 @@ def add_user(first_name, last_name, email, password):
 
 
 def login_user(email, password):
-    user = mongo.db["users"].find_one({"email": email})
+    user = mongo.db["users"].find_one({"credentials.email": email})
 
     if not user:
         print("User not found:", email)
         return None
 
-    if user["password"] == password:
-        print("Login successful:", user["email"])
+    if user["credentials"]["password"] == password:
+        print("Login successful:", user["credentials"]["email"])
         return user
     else:
         print("Password mismatch:", email)
