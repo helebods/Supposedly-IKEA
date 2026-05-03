@@ -198,10 +198,11 @@
             </div>
           </div>
 
-          <button class="add-btn" type="submit">Add Item</button>
-          <a href="{{ url_for('main.all_items') }}" class="secondary-btn">View All Items</a>
-        </form>
-      </div>
+    <button class="add-btn" type="submit">Add Item</button>
+    <a href="{{ url_for('main.all_items') }}" class="secondary-btn">View All Items</a>
+
+    </form>
+    </div>
 
       <!-- RIGHT: Side Panel -->
       <div class="side-panel">
@@ -245,6 +246,9 @@
                   <div class="stock-card">
                     <div class="stock-title">Stock</div>
                     <div class="stock-value">Qty: {{ item.stock.quantity }} {{ item.stock.unit }}</div>
+                  </div>
+                  <a href="#" class="view-more-btn">View More</a>
+                </div>
               </div>
             </li>
             {% endfor %}
@@ -253,7 +257,6 @@
             <p>No recent items yet.</p>
           {% endif %}
         </div>
-      </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/johnny.js')}}"></script>

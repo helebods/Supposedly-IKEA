@@ -87,6 +87,14 @@
       <div class="content-header">
         <div class="header-top">
           <h1>All Items</h1>
+          {% if items %}
+          <div class="results-count">
+            <span
+              >Showing {{ items|length }} item{{ items|length != 1 and 's' or ''
+              }}</span
+            >
+          </div>
+          {% endif %}
         </div>
 
         <div class="filters-container">
@@ -149,6 +157,7 @@
                 />
               </div>
             </div>
+
             <div class="filter-actions">
               <button type="submit" class="filter-btn">Apply Filters</button>
               <a href="{{ url_for('main.all_items') }}" class="clear-btn"
@@ -242,6 +251,7 @@
         document.getElementById("overlay").classList.remove("show");
       }
 
+      // Filter form enhancements
       document.addEventListener("DOMContentLoaded", function () {
         const filterForm = document.getElementById("filter-form");
         const quantityOperator = document.getElementById("quantity-operator");

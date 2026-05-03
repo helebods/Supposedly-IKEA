@@ -76,7 +76,6 @@ def get_recent_items(limit=3):
         .limit(limit)
     )
 
-
 # Insert Item
 
 
