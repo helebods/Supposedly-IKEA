@@ -4,7 +4,7 @@ import os
 from flask import Blueprint, current_app, jsonify, render_template, request, redirect, url_for, session
 from . import mongo
 from .ikea_db.mongodb import add_user, build_stock, get_all_items, insert_product, delete_One_Item, update_One_Item, build_product, build_location, build_pricing
-from .ikea_db.mongodb import login_user, count_total_items, count_per_category, count_per_name, get_manage_items, search_items, get_low_stock
+from .ikea_db.mongodb import login_user, count_total_items, get_manage_items, search_items, get_low_stock, average_selling_price, max_quantity, min_quantity
 from werkzeug.utils import secure_filename
 from bson import ObjectId
 
@@ -45,7 +45,7 @@ def all_items():
         return redirect(url_for("main.auth_home"))
 
     items = get_all_items()
-    return render_template("all_items.html", items=items)
+    return render_template("all_items.html", items=items, stats=get_stats)
 
 # Sign In
 
