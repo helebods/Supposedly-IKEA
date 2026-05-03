@@ -84,12 +84,18 @@
     <!-- CONTENT -->
     <main class="content">
       <div class="content-header">
-        <div class="header-top">
-          <h1>All Items</h1>
-        </div>
 
         <div class="filters-container">
           <form method="GET" action="{{ url_for('main.all_items') }}" id="filter-form">
+            <div class="filter-group">
+              <h3>Find By</h3>
+              <div class="filter-row">
+                <select name="location_filter" id="location-filter">
+                  <option value="none">All locations</option>
+                  <option value="nearest">Nearest</option>
+                </select>
+              </div>
+            </div>
             <div class="filter-group">
               <h3>View By</h3>
               <div class="filter-row">
@@ -175,9 +181,19 @@
                 </p>
               </div>
 
+              {% if location_filter == 'nearest' %}
+              <div class="distance-container">
+                <h3>Distance</h3>
+                <p>
+                  {{ (item.distance / 1000) | round(2) }} km away
+                </p>
+              </div>
+              {% endif %}
+
               <div class="price-container">
-                <p><span>Cost: </span>&#8369; {{ item.price.cost }}</p>
                 <h3>Price</h3>
+                <p><span>Cost: </span>&#8369; {{ item.price.cost }}</p>
+                
               </div>
 
               <div class="view-more">
@@ -239,6 +255,10 @@
         if (urlParams.get('view_by')) {
           viewBySelect.value = urlParams.get('view_by');
         }
+        if (urlParams.get('location_filter')) {
+          document.getElementById('location-filter').value = urlParams.get('location_filter');
+        }
+        
         toggleInputs();
 
         filterForm.addEventListener('submit', function(e) {

@@ -172,8 +172,10 @@ body {
 
 .content-header {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
+
     padding: 16px 20px;
     background: #fff;
     border: 1px solid #eee;
@@ -203,9 +205,9 @@ body {
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 24px;
-    min-height: 65vh;
+    height: 435px;
     box-shadow: 0 25px 60px rgba(79,70,229,0.15);
-    overflow: hidden;
+    overflow-y: scroll;
 }
 
 .container ul {
@@ -307,13 +309,6 @@ body {
     font-size: 20px;
     font-weight: 600;
     color: #8580d1;
-}
-
-.content-header .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
 }
 
 .results-count {

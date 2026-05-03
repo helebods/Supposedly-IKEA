@@ -1,9 +1,14 @@
-from flask import current_app
+from flask import current_app, request
 
+import random
 from app import mongo
 from bson.objectid import ObjectId
 from datetime import datetime
 import os
+
+# Create indexing
+def init_db():
+    mongo.db["items"].create_index([("location.geo", "2dsphere")])
 
 # View All Items
 def get_all_items(query=None, projection=None, sort=None, limit=None):
@@ -74,6 +79,19 @@ def get_recent_items(limit=3):
 
 
 # Insert Item
+def get_random_point():
+    min_lat = 15.40
+    max_lat = 15.58
+    min_lng = 120.88
+    max_lng = 121.05
+
+    return {
+        "type": "Point",
+        "coordinates": [
+            random.uniform(min_lng, max_lng),
+            random.uniform(min_lat, max_lat)
+        ]
+    }
 
 
 def build_product(Product_Name, Product_Brand, Product_Category, Product_Description, File_Name):
@@ -91,7 +109,8 @@ def build_location(warehouse, aisle, rack, bin):
         "warehouse": warehouse,
         "aisle": aisle,
         "rack": rack,
-        "bin": bin
+        "bin": bin,
+        "geo": get_random_point()
     }
 
 
@@ -117,7 +136,6 @@ def build_stock_history(type, quantity, date, handled_by):
         "date": date,
         "handled_by": handled_by
     }
-
 
 def insert_product(data):
 
@@ -150,6 +168,7 @@ def insert_product(data):
             datetime.now(),
             data.get("user_id", "admin")
         ),
+        "area": get_random_point(),
         "created_at": datetime.now(),
         "updated_at": datetime.now()
     }
@@ -218,6 +237,7 @@ def delete_One_Item(product_Id):
         return False
 
 
+
 def add_user(first_name, last_name, email, password):
     if mongo.db["users"].find_one({"credentials.email": email}):
         print("User already exists:", email)
@@ -229,8 +249,11 @@ def add_user(first_name, last_name, email, password):
         "credentials": {
             "email": email,
             "password": password
-        }
+        },
+        "area": get_random_point()
     }
+
+    print(get_random_point())
 
     mongo.db["users"].insert_one(user)
 
@@ -428,3 +451,21 @@ def insert_order(user_id, items, total_cost):
 
 def get_orders_by_user(user_id):
     return list(mongo.db["orders"].find({"ordered_by": ObjectId(user_id)}))
+
+def get_nearest_warehouse(user_area):
+    if not user_area:
+        return []
+
+    return list(mongo.db["items"].aggregate([
+        {
+            "$geoNear": {
+                "near": user_area,
+                "distanceField": "distance",
+                "spherical": True,
+                "key": "location.geo"
+            }
+        },
+        {
+            "$limit": 5
+        }
+    ]))

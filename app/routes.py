@@ -3,7 +3,7 @@ import uuid
 import os
 from flask import Blueprint, current_app, jsonify, render_template, request, redirect, url_for, session
 from . import mongo
-from .ikea_db.mongodb import add_user, build_stock, get_all_items, insert_product, delete_One_Item, update_One_Item, build_product, build_location, build_pricing
+from .ikea_db.mongodb import add_user, build_stock, get_all_items, get_nearest_warehouse, insert_product, delete_One_Item, update_One_Item, build_product, build_location, build_pricing
 from .ikea_db.mongodb import login_user, count_total_items, get_manage_items, search_items, get_low_stock, average_selling_price, min_quantity, max_quantity, get_item_by_id, get_recent_items
 from .ikea_db.mongodb import find_by_product_name, find_with_include_projection, find_with_exclude_projection, find_by_category_with_include, find_by_category_with_exclude, insert_order
 from werkzeug.utils import secure_filename
@@ -135,6 +135,26 @@ def all_items():
     if 'limit' in args:
         limit = int(args['limit'])
 
+    location_filter = args.get("location_filter", "none")
+
+    # NEAREST WAREHOUSE FILTER
+    if location_filter == "nearest":
+        user_id = session.get("user_id")
+    
+        if user_id:
+            user = mongo.db["users"].find_one({"_id": ObjectId(user_id)})
+
+        if user and user.get("area"):
+            items = get_nearest_warehouse(user["area"])
+
+            return render_template(
+                "all_items.html",
+                items=items,
+                stats=gets_stats(),
+                view_by=view_by,
+                location_filter=location_filter
+            )
+
     items = get_all_items(query=query, projection=projection, sort=sort, limit=limit)
 
     return render_template("all_items.html", items=items, stats=gets_stats(), view_by=view_by)
@@ -225,7 +245,7 @@ def insert():
             upload_path = os.path.join(current_app.root_path, "static/uploads", filename)
             file.save(upload_path)
 
-        data["image_url"] = filename if filename else "quibolords.jpg"
+        data["image_url"] = filename if filename else "image0.jpg"
 
         # Insert to items collection (existing)
         insert_product(data)
